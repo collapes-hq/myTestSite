@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block title %}压测机管理{% endblock %}
+{% block content %}
+    <div class="row mb-4 pl-3">
+        <div class="rol align-self-end">
+
+            <button class="btn btn-primary active " type="button" id="addbutton">add
+
+                <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-person-plus" fill="currentColor"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10zM13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+
+            </button>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        {% for server in serverlist %}
+            <div class="col-xl-3 col-md-6 mb-4">
+
+                <div class="card {% if server.server_status == 0 %} border-left-success {% elif server.server_status == 1 %} border-left-warning {% elif server.server_status == 2 %} border-left-danger {% endif %} shadow h-100 py-2 "
+                     data-servername="aaa">
+                    <div class="card-header" id="header">
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="text-md font-weight-bold text-primary text-uppercase mb-1">
+                                    名称:{{ server.server_name }}</div>
+                            </div>
+                            <div class="col-2" id="editserverinfo">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil"
+                                     fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                </svg>
+                            </div>
+                            <div class="col-2" id="delserver">
+
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-person-x"
+                                     fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10zm1.146-7.85a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-1">
+                                <div class="text-md font-weight-bold text-primary text-uppercase mb-1"
+                                     id="server_ip">
+                                    IP地址:{{ server.server_ip }}
+                                </div>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <button disabled
+                                        class="btn {% if server.server_status == 0 %} btn-success {% elif server.server_status == 1 %} btn-warning {% elif server.server_status == 2 %} btn-danger {% endif %}"
+                                        id="server_status">{{ server.get_server_status_display }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">压测机信息</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="serverinfoedit" novalidate>
+                        <div class="form-group">
+                            <label for="server-name" class="col-form-label">名称:</label>
+                            <input type="text" class="form-control" id="server-name" disabled="disabled" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="server-ip" class="col-form-label">IP地址</label>
+                            <input type="text" class="form-control" id="server-ip" required>
+                        </div>
+                        <div class="form-row mb-4">
+                            <div class="form-group col-6">
+                                <label for="server-cloud" class="col-form-label">所属云</label>
+                                <select class="custom-select" id="server-cloud" name="server-cloud" required>
+                                    <option selected disabled value="">Choose...</option>
+                                    <option value="tencentCloud">腾讯云</option>
+                                    <option value="aliCloud">阿里云</option>
+                                    <option value="huaweiCloud">华为云</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="server-status" class="col-form-label">状态</label>
+                                <select class="custom-select" id="server-status" name="server-status" required>
+                                    <option selected disabled value="">Choose...</option>
+                                    {% for status in serverstatus %}
+                                        <option value="{{ status.statacode }}"
+                                                {% if server.server_status == status.statacode %}
+                                                selected {% endif %}>{{ status.statavalue }}</option>
+
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+{% block script %}
+    <script>
+        $(function () {
+            $('.card').on('click', '#delserver', function () {
+                var serverName = $(this).prev().prev().text().split(":")[1];
+                var thisCard = $(this);
+                $.ajax({
+                    async: false,
+                    url: "/forfun/delserver/",
+                    type: 'GET',
+                    data: {'servername': serverName},
+                    dataType: "JSON",
+                    success: function (resp) {
+                        if (resp.returncode === 200) {
+                            alert(resp.message);
+                            thisCard.parent().parent().parent().parent().remove()
+                        } else {
+                            alert("删除失败，请稍后再试" + resp.message)
+                        }
+                    }
+                });
+            });
+            $('.card').on('click', '#editserverinfo', function () {
+                var server_name = $(this).prev().text().split(":")[1];
+                var server_ip = $(this).parent().parent().next().find("#server_ip").text().split(":")[1];
+                //var server_status = $('#server_status').text();
+                console.log(server_ip);
+                var modalThis = $('#editModal');
+                modalThis.modal('show');
+                modalThis.find('#server-name').val($.trim(server_name));
+                modalThis.find('#server-ip').val($.trim(server_ip));
+                //modalThis.find('#server-status')
+            });
+
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                    } else {
+                        event.preventDefault();
+
+                        submitFormData();
+                        window.location.reload()
+                    }
+
+                }, false);
+            });
+
+
+            $('#addbutton').click(function () {
+                let editmoal = $('#editModal');
+                editmoal.modal("show");
+                editmoal.find("#server-name").removeAttr('disabled');
+            })
+
+
+        });
+
+
+        function submitFormData() {
+            let server_name = $('#server-name').val();
+            let server_ip = $('#server-ip').val();
+            let server_cloud = $('#server-cloud option:selected').val();
+            let server_status = $('#server-status option:selected').val();
+            let data = {
+                "server_name": server_name,
+                "server_ip": server_ip,
+                "server_cloud": server_cloud,
+                "server_status": server_status,
+
+            };
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: "/forfun/saveServerInfo/",
+                data: data,
+                success: function (resp) {
+                    if (resp.returncode === 200) {
+                        alert("保存成功");
+                        $('#editModal').modal("hide");
+
+                    }
+                }
+            })
+        }
+
+
+
+        function addcheck() {
+            console.log(3);
+            var addforms = document.getElementsByClassName("addservermodal");
+            // Loop over them and prevent submission
+            var validations = Array.prototype.filter.call(addforms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                    } else {
+                        event.preventDefault();
+                        console.log(4);
+                        submitAddFormData()
+                    }
+
+                }, false);
+            });
+
+
+        }
+
+    </script>
+{% endblock %}

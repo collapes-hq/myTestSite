@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}任务列表{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block content %}
+    {#    <div class="card">#}
+    {#        <div class="card-header">#}
+    {#            任务列表#}
+    {#        </div>#}
+    {#        <div class="card-body">#}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+
+
+                    <table class="table table-bordered" id="tasktable">
+                        <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>任务名称</th>
+                            <th>压测url</th>
+                            <th>业务线</th>
+                            <th>压测机</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for task in data_list %}
+                            <tr>
+
+                                <td class="align-middle">{{ task.task_id }}</td>
+                                <td class="align-middle">{{ task.task_name }}</td>
+                                <td class="text-truncate align-middle"
+                                    style="max-width: 350px;">{{ task.test_url }}</td>
+
+                                <td class="align-middle">{{ task.busi_line.busi_name }}</td>
+
+                                <td class="align-middle">{{ task.exec_device.server_name }}</td>
+                                <td class="align-middle">{{ task.c_time|date:"Y/m/d H:m:s" }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-justified " role="group" aria-label="...">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'performanceTest:paramtest' task.task_id %}"
+                                               class="btn btn-primary">执行</a>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'performanceTest:paramtest' task.task_id %}"
+                                               class="btn btn-warning">编辑</a>
+
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-danger " type="button" id="del"> 删除</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {#        </div>#}
+    {#    </div>#}
+{% endblock %}
+{% block script %}
+    <script src="{% static 'vendor/bootstrap/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(function () {
+            $('#tasktable').DataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            })
+
+        });
+
+
+        $('tbody').on('click', '#del', function () {
+            var form_value = [];
+            $(this).parent().parent().parent().parent().children('td').each(function () {
+                form_value.push($(this).text());
+
+            });
+            var task_id = form_value[0];
+            var thistr = $(this); //将此条的对象赋值 才能在ajax中用
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: "/performanceTest/deltask/",
+                data: {'task_id': task_id},
+                dataType: "JSON",
+                success: function (resp) {
+                    if (resp.returncode === 200) {
+                        //console.log(resp.returncode);
+                        thistr.parent().parent().parent().parent().remove()
+                    }
+                }
+            });
+        })
+
+    </script>
+{% endblock %}

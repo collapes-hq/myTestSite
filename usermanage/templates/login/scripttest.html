@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}脚本压测{% endblock %}
+{% block content %}
+
+    <div class="card text-center">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">压测配置</a>
+                </li>
+
+            </ul>
+        </div>
+        <div class="card-body">
+            <form >
+                <div class="form-row">
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">案例名称</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="案例名" aria-label="planName"
+                               aria-describedby="basic-addon1" name="planName" required>
+                    </div>
+                </div>
+
+            </form>
+            <form enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                <div class="file-loading">
+                    <input id="inputfile" class="file" type="file" multiple data-min-file-count="1" name="myfile">
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-sm" id="myModal" role="dialog" data-backdrop="false" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <p class="text-center mb-0">
+                    <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                    上传成功
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block extrascript %}
+    <script type="text/javascript">
+
+
+        $('#inputfile').fileinput({
+            theme: 'fas',
+            language: 'zh',
+            uploadUrl: '/uploadfile/',
+            allowedFileExtensions: ['jmx', 'jpg'],
+            uploadLabel: '上传附件',
+            browseLabel: '选择脚本',
+
+        }).on("fileuploaded", function (e, data) {
+
+            var result = data.response["result"];
+            console.log(result);
+            if (result === "UPLOAD SUCESS") {
+                $('#myModal').modal('show');
+                setTimeout("$('#myModal').modal('hide')", 1000)
+
+
+                //console.log(data.response);
+                //alert(data.response["result"]);
+            }
+        });
+
+
+
+    </script>
+
+{% endblock %}

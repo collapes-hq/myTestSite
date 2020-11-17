@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% block title %}自定义压测{% endblock %}
+{% block content %}
+    <h2>压测任务配置</h2>
+    <div class="card text-center">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">基础配置</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/performance/tasklist/">任务列表</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+
+
+            <form id="testParams" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="form-row">
+
+                    <label for="planName">任务名称</label>
+                    <input type="text" class="form-control" placeholder="案例名"
+                           aria-describedby="basic-addon1" value="{{ data.task_name|default_if_none:'' }}" id="planName"
+                           name="planName" required>
+                </div>
+                <br>
+                <div class="form-row">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">请求URL</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="http://testurl" aria-label="testUrl"
+                               aria-describedby="testUrl" value="{{ data.test_url|default_if_none:'' }}" id="testUrl"
+                               name="testUrl" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-4 mb-3">
+                        <label for="threadCount">线程数(int)</label>
+                        <input type="text" class="form-control" id="threadCount" value="{{ data.threadCount|default:''}}" name="threadCount" required>
+
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="startTime">步调时间(s)</label>
+                        <input type="text" class="form-control" id="startTime" value="{{ data.stepTime|default:'' }}" name="startTime" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="testTime">压测时长(s)</label>
+                        <input type="text" class="form-control" id="testTime" value="{{ data.testTime|default:''}}"
+                               name="testTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        <label for="urlParam">请求参数</label>
+                        <input type="text" class="form-control" id="urlParam" value="{{ data.urlPrama|default:'' }}" name="urlParam"
+                               required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="state">压测机</label>
+                        <select class="custom-select" id="state" name="state" required>
+                            <option selected disabled value="">Choose...</option>
+                            {% if taskid != 0 %}
+                                <option value="" selected>{{ data.exec_device.server_name }}</option>
+                            {% endif %}
+
+
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="busi">业务线</label>
+                        <select class="custom-select" id="busi" name="busi" required>
+                            <option selected disabled value="">Choose...</option>
+                            {% for busi in busi_line %}
+                                <option value="{{ busi.busi_id }}"
+                                        {% if taskid != 0 and busi.busi_id == data.busi_line.busi_id %}selected{% endif %}>{{ busi.busi_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check float-left">
+                        <input class="form-check-input" type="checkbox" value="" id="isTestTask" name="isTestTask">
+                        <label class="form-check-label" for="invalidCheck2">
+                            是否添加为测试任务
+                        </label>
+                    </div>
+                    <div>
+                        <button id="submitbutton" class="btn btn-primary float-right active" type="submit">
+                            save task
+                        </button>
+
+                    </div>
+                </div>
+
+
+            </form>
+            {#            <div >#}
+            {#                <button id="submitbutton" class="btn btn-primary float-right active" onclick="submitFormData()">save task#}
+            {#                </button>#}
+            {##}
+            {##}
+            {#            </div>#}
+
+
+        </div>
+        <div class="modal fade bd-example-modal-sm" id="myModal" role="dialog" data-backdrop="false"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <p class="text-center mb-0" id="info">
+                        <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                        上传成功,请到任务列表页面查看
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div id="params"></div>
+    </div>
+{% endblock %}
+{% block extrascript %}
+
+    <script>
+        $(function () {
+            'use strict';
+            $.ajax({
+                url: "/performanceTest/getavailbleserver/",
+                type: 'get',
+                async: false,
+                dataType: "json",
+                success: function (resp) {
+                    console.log(resp.returncode);
+                    //var data=JSON.parse(resp);
+                    if (resp.returncode === 200) {
+                        var server_list = resp.server_list;
+                        var inserthtml = '';
+                        for (var i = 0; i < server_list.length; i++) {
+                            inserthtml = inserthtml + "<option>" + server_list[i] + "</option>";
+                            console.log(inserthtml)
+                        }
+                        $('#state').append(inserthtml)
+                    }
+
+                }
+            });
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            form.classList.add('was-validated');
+                        } else {
+                            event.preventDefault();
+
+                            submitFormData()
+                        }
+
+                    }, false);
+                });
+            }, false);
+        });
+
+
+        function submitFormData() {
+
+
+            let planName = $("#planName").val();
+            let testUrl = $("#testUrl").val();
+            let threadCount = $("#threadCount").val();
+            let startTime = $("#startTime").val();
+            let urlParam = $("#urlParam").val();
+            let state = $("#state").val();
+            let isTestTask = $("#isTestTask").val();
+            let busi = $("#busi option:selected").val();
+
+            let data = {
+                "planName": planName,
+                "testUrl": testUrl,
+                "threadCount": threadCount,
+                "startTime": startTime,
+                "urlParam": urlParam,
+                "state": state,
+                "isTestTask": isTestTask,
+                "busi": busi
+            };
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: "/performanceTest/savePlan/",
+                data: data,
+                success: function (resp) {
+                    if (resp.returncode === 200) {
+                        $("#info").html("<i class=\"fa fa-check-circle text-success mr-1\"  aria-hidden=\"true\"></i>" + resp.message);
+                        $("#myModal").modal('show');
+                        setTimeout("$('#myModal').modal('hide')", 3000)
+                    }
+                    if (resp.returncode === 20100) {
+                        $("#info").html("<i class=\"fa fa-check-circle text-success mr-1\"  aria-hidden=\"true\"></i>" + resp.message);
+                        $("#myModal").modal('show');
+                        setTimeout("$('#myModal').modal('hide')", 3000)
+
+
+                    }
+
+
+                }
+
+            })
+
+        }
+    </script>
+
+{% endblock %}
