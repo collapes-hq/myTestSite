@@ -21,6 +21,7 @@ from django.urls import include, path
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url('', include('forfun.urls')),
+    url(r'^api/', include('apitest.urls')),
     # url(r'^dashboard$', include('performanceTest.urls')),
     url(r'^test/', view=views.test),
     url(r'^login/', view=views.login),

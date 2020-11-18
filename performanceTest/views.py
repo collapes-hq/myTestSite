@@ -5,7 +5,7 @@ from .models import TaskList, ServerInfo, BusiLine
 from django.core import serializers
 import json
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import random
 
