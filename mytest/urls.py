@@ -18,6 +18,8 @@ from django.contrib import admin
 from usermanage import views
 from django.urls import include, path
 
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url('', include('forfun.urls')),

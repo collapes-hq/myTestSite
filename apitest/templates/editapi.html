@@ -12,7 +12,7 @@
                 <div class="form-group row">
                     <label for="apiname" class="col-sm-1 col-form-label">接口名称</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="apiname" name="apiname" required>
+                        <input type="text" class="form-control" id="apiname" name="apiname" value="{{ api_info.api_name|default:'' }}" required>
                     </div>
                 </div>
 
@@ -20,14 +20,14 @@
                 <div class="form-group row">
                     <label for="apiurl" class="col-sm-1 col-form-label">接口地址</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="apiurl" name="apiurl" required>
+                        <input type="text" class="form-control" id="apiurl" value="{{ api_info.api_url|default:'' }}" name="apiurl" required>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="apidesc" class="col-sm-1 col-form-label">接口描述</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="apidesc" name="apidesc" required>
+                        <input type="text" class="form-control" id="apidesc" name="apidesc" value="{{ api_info.api_apidesc|default:'' }}" required>
                     </div>
                 </div>
 
@@ -86,8 +86,7 @@
                         <select class="custom-select" id="busi" name="busi" required>
                             <option selected disabled value="">Choose...</option>
                             {% for busi in busi_line %}
-                                <option value="{{ busi.busi_id }}"
-                                >{{ busi.busi_name }}</option>
+                                <option value="{{ busi.busi_id }}" {% if api_info.api_busi.busi_id == busi.busi_id %} selected {% endif %} >{{ busi.busi_name }}</option>
                             {% endfor %}
 
 
@@ -139,7 +138,7 @@
                 <div class="form-group row">
                     <label for="apicontent" class="col-sm-1 col-form-label">正文内容</label>
                     <div class="col-sm-8">
-                        <textarea class="form-control" id="apicontent" name="apicontent"> </textarea>
+                        <textarea class="form-control" id="apicontent" name="apicontent" > </textarea>
                     </div>
                 </div>
 
@@ -215,7 +214,7 @@
                     data: t,
                     success: function (resp) {
                         if (resp.returncode === 200) {
-                            // window.location.href='/api/manage'
+                            setTimeout(window.location.href='/api/manage',5000)
                         }
 
                     }

@@ -14,19 +14,24 @@ def apimanage(request):
     return render(request, 'apimanage.html', locals())
 
 
-def editapi(request):
-    apilist = apiInfo.objects.all()
-    busi_line = BusiLine.objects.all()
-    return render(request, 'editapi.html', locals())
+def editapi(request,api_id=0):
+    if api_id == 0:
+        busi_line = BusiLine.objects.all()
+        return render(request, 'editapi.html', locals())
+    else:
+        busi_line = BusiLine.objects.all()
+        api_info = apiInfo.objects.get(api_id=api_id)
+        print(api_info)
+        return render(request, 'editapi.html', locals())
 
 
 @csrf_exempt
 def saveapi(request):
-    print(1)
     if request.method == "POST":
         apiname = request.POST.get("apiname")
         header_key = request.POST.getlist("headerkey")
         header_value = request.POST.getlist("headervalue")
+        api_busi = request.POST.get("busi")
         apiurl = request.POST.get("apiurl")
         apidesc = request.POST.get("apidesc")
         method = request.POST.get("method")
@@ -34,12 +39,16 @@ def saveapi(request):
         apicontent = request.POST.get("apicontent")
 
         # param_zip = zip([a for a in key if a is not ""], [b for b in value if b is not ""])
-        if apiInfo.objects.filter(api_name=apiname).exist():
-            param_dict = {}
+        if not apiInfo.objects.filter(api_name=apiname):
+            header_dict = {}
             for k, v in zip(header_key, header_value):
                 if k not in [None, ""] and v not in [None, ""]:
-                    param_dict[k] = v
-            print(param_dict)
+                    header_dict[k] = v
+            print(header_dict)
+            s = apiInfo.objects.create(api_name=apiname, api_url=apiurl, api_busi_id=int(api_busi), api_type=method,
+                                       api_contenttype=int(contenttype), api_content=apicontent, api_apidesc=apidesc,
+                                       api_headers=header_dict)
+            s.save()
         else:
             return JsonResponse({"returncode": 200, "message": "接口名称已存在"})
-        return JsonResponse({'returncode': 200})
+        return JsonResponse({'returncode': 200,"message": "接口保存成功"})

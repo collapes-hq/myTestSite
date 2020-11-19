@@ -150,6 +150,7 @@ def saveplan(request):
                                                testTime=testTime)
                 init.save()
             except Exception as e:
+
                 return JsonResponse({"returncode": 200, "message": '保存失败', "info": e})
         return JsonResponse({"returncode": 200, "message": '压测任务保存成功'})
 
