@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'performanceTest/getavailbleserver/', view=views.getavalibleserver),
     # url(r'performanceTest/indextest/(?P<task_name>[\w-]+)/$', view=views.indextest, name='paramtest'),
     url(r'^performanceTest/indextest/(?P<task_id>[\d]{0,4})/$', view=views.indextest, name='paramtest'),
+    url(r'^performanceTest/exectask/(?P<task_id>[\d]{0,4})/$', view=views.exectask, name='tasktest'),
 
 ]

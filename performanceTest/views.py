@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.db import models
-from .models import TaskList
 from .models import TaskList, ServerInfo, BusiLine
 from django.core import serializers
 import json
@@ -8,6 +7,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import random
+import os, time
+from urllib.parse import urlparse
 
 
 # Create your views here.
@@ -155,6 +156,106 @@ def saveplan(request):
         return JsonResponse({"returncode": 200, "message": '压测任务保存成功'})
 
 
+def exectask(request, task_id=0):
+    # 首先拿到数据库里此条压测的对应信息
+    task_info = TaskList.objects.get(task_id=task_id)
+    task_param = task_info.__dict__
+    # queryset数据先序列化再json->字典
+    # task_param = json.loads(serializers.serialize("json", task_info))
+    # 解析url scheme url port path param
+    url = urlparse(task_param['test_url'])
+    url_scheme = url.scheme
+    url_main = url.netloc.split(':')[0]
+    cur_time = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime())
+    if len(url.netloc.split(':')) > 1:
+        url_port = url.netloc.split(':')[1]
+    else:
+        url_port = ''
+    url_path = url.path
+    jmx_dir_path = os.path.join(os.path.dirname(__file__), 'jmeterFiles/jmxFiles')
+    demo_jmx = os.path.join(jmx_dir_path, 'demo.jmx')
+    print(demo_jmx)
+    # 根据task_id新建
+    new_task_jmx = os.path.join(jmx_dir_path, '{0}-{1}.jmx'.format(str(task_param['task_id']), str(cur_time)))
+    # 读取模板的数据，写入到新的jmx文件
+    if not os.path.exists(new_task_jmx):
+        with open(demo_jmx, encoding='utf-8') as f:
+            lines = f.readlines()
+            with open(new_task_jmx, encoding='utf-8', mode='w') as new_f:
+                for line in lines:
 
-def execTask(request):
-    pass
+                    # 替换压测名称
+                    if task_param['task_name']:
+                        new_line = line.replace(
+                            '<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="测试计划" enabled="true">',
+                            '<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="{name}" enabled="true">'.format(
+                                name=task_param['task_name']))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换线程数
+                    if task_param['threadCount']:
+                        new_line = line.replace('<stringProp name="ThreadGroup.num_threads">num_threads</stringProp>',
+                                                '<stringProp name="ThreadGroup.num_threads">{num_threads}</stringProp>'.format(
+                                                    num_threads=task_param['threadCount']))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换步调时间 ramp_time
+                    if task_param['threadCount']:
+                        new_line = line.replace('<stringProp name="ThreadGroup.ramp_time">ramp_time</stringProp>',
+                                                '<stringProp name="ThreadGroup.ramp_time">{ramp_time}</stringProp>'.format(
+                                                    ramp_time=task_param['stepTime']))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换压测时长
+                    if task_param['testTime']:
+                        new_line = line.replace('<stringProp name="ThreadGroup.duration">duration</stringProp>',
+                                                '<stringProp name="ThreadGroup.duration">{duration}</stringProp>'.format(
+                                                    duration=task_param['testTime']))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换压测url
+                    if url_main:
+                        new_line = line.replace('<stringProp name="HTTPSampler.domain">url</stringProp>',
+                                                '<stringProp name="HTTPSampler.domain">{url}</stringProp>'.format(
+                                                    url=url_main))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换 port
+                    if url_port:
+                        new_line = line.replace('<stringProp name="HTTPSampler.port">80</stringProp>',
+                                                '<stringProp name="HTTPSampler.port">{port}</stringProp>'.format(
+                                                    port=url_port))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换 http
+                    if url_scheme:
+                        new_line = line.replace('<stringProp name="HTTPSampler.protocol">http</stringProp>',
+                                                '<stringProp name="HTTPSampler.protocol">{scheme}</stringProp>'.format(
+                                                    scheme=url_scheme))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # 替换 path
+                    if url_path:
+                        new_line = line.replace('<stringProp name="HTTPSampler.path">path</stringProp>',
+                                                '<stringProp name="HTTPSampler.path">{path}</stringProp>'.format(
+                                                    path=url_path))
+                        if line != new_line:
+                            new_f.write(new_line)
+                            continue
+                    # # 替换 method (页面也需要添加请求方式)
+                    # if url_path:
+                    #     new_line = line.replace('<stringProp name="HTTPSampler.path">path</stringProp>',
+                    #                             '<stringProp name="HTTPSampler.path">{path}</stringProp>'.format(
+                    #                                 path=url_path))
+                    #     if line != new_line:
+                    #         new_f.write(new_line)
+                    #         continue
+                    new_f.write(line)
+    return render(request, 'performance/taskresult.html')
