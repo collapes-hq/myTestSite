@@ -178,6 +178,7 @@
             let startTime = $("#startTime").val();
             let urlParam = $("#urlParam").val();
             let state = $("#state").val();
+            let testTime = $("#testTime").val();
             let isTestTask = $("#isTestTask").val();
             let busi = $("#busi option:selected").val();
 
@@ -189,7 +190,8 @@
                 "urlParam": urlParam,
                 "state": state,
                 "isTestTask": isTestTask,
-                "busi": busi
+                "busi": busi,
+                "testTime":testTime
             };
             console.log(data);
             $.ajax({
