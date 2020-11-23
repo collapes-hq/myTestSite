@@ -24,7 +24,7 @@ SECRET_KEY = '!zd+uvq70kpamhg4qo*j3mi-is0%r+ums3%s)uohp=^9#f_84t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '0.0.0.0:9000', '121.36.69.137']
 
 # Application definition
 
@@ -59,6 +59,7 @@ ROOT_URLCONF = 'mytest.urls'
 CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8000',
     'http://localhost:8000',
+    'http://121.36.69.137:9000',
 )
 LOGIN_URL = "/login/"
 TEMPLATES = [

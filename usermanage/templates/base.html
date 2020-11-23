@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{% block title %}一个自我摸索版的平台{% endblock %}</title>
+    <title>{% block title %}一个自我摸索的小网站{% endblock %}</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -82,7 +82,7 @@
                     <a class="collapse-item" href="/performanceTest/indextest/">自定义压测</a>
                     <a class="collapse-item" href="/scripttest/">脚本压测</a>
                     <a class="collapse-item" href="/performanceTest/tasklist">任务列表</a>
-                    <a class="collapse-item" href="cards.html">报告页面</a>
+                    <a class="collapse-item" href="/performanceTest/taskresultlist">压测结果</a>
                 </div>
             </div>
         </li>
@@ -126,11 +126,11 @@
                     <h6 class="collapse-header">For My Bro:</h6>
                     <a class="collapse-item" href="/forfun/wordCloud/">词云</a>
                     <a class="collapse-item" href="/forfun/servermanage/">压测机管理</a>
-{#                    <a class="collapse-item" href="forgot-password.html">Forgot Password</a>#}
-{#                    <div class="collapse-divider"></div>#}
-{#                    <h6 class="collapse-header">Other Pages:</h6>#}
-{#                    <a class="collapse-item" href="404.html">404 Page</a>#}
-{#                    <a class="collapse-item" href="blank.html">Blank Page</a>#}
+                    {#                    <a class="collapse-item" href="forgot-password.html">Forgot Password</a>#}
+                    {#                    <div class="collapse-divider"></div>#}
+                    {#                    <h6 class="collapse-header">Other Pages:</h6>#}
+                    {#                    <a class="collapse-item" href="404.html">404 Page</a>#}
+                    {#                    <a class="collapse-item" href="blank.html">Blank Page</a>#}
                 </div>
             </div>
         </li>
@@ -143,7 +143,7 @@
         </li>
 
         <!-- Nav Item - Tables -->
-        <li class="nav-item" >
+        <li class="nav-item">
             <a class="nav-link" href="#" disabled>
                 <i class="fas fa-fw fa-table"></i>
                 <span>Tables</span></a>
@@ -175,8 +175,9 @@
                 </button>
 
                 <!-- Topbar Search -->
-                <p>{{ short }}</p>
-
+                <div >
+                    <p>{{ short }}</p>
+                </div>
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
 
@@ -254,7 +255,6 @@
                             <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                         </div>
                     </li>
-
 
 
                     <div class="topbar-divider d-none d-sm-block"></div>

@@ -2,5 +2,6 @@
 
 import subprocess
 
-
-s = subprocess.run()
+import os
+s = os.getcwd()
+print(s)

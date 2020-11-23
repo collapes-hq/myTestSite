@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db import models
-from .models import TaskList, ServerInfo, BusiLine
+from .models import TaskList, ServerInfo, BusiLine, TaskResult
 from django.core import serializers
 import json
 from django.http import HttpResponse, JsonResponse
@@ -20,9 +20,9 @@ def firstpage(request):
     print(request.session.get('is_login'))
     unusecount = len(ServerInfo.objects.filter(server_status=0))
     taskcount = len(TaskList.objects.all())
-    short = ['All thing in their being are good for something.',
-             'The good seaman is known in bad weather.',
-             'Cease to struggle and you cease to live.'][random.randint(0, 2)]
+    short = ['我们对待生活的态度，也就是所说的幸运度',
+             '时间就是金钱，我的朋友',
+             '健康的身体是你做任何事情的本钱'][random.randint(0, 2)]
     data = json.dumps([10000, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 60000])
     print(data)
     return render(request, 'login/dashboard.html', locals())
@@ -151,9 +151,21 @@ def saveplan(request):
                                                testTime=testTime)
                 init.save()
             except Exception as e:
-
                 return JsonResponse({"returncode": 200, "message": '保存失败', "info": e})
         return JsonResponse({"returncode": 200, "message": '压测任务保存成功'})
+
+
+from threading import Thread
+
+
+def asyncTask(f):
+    def wrapper(*args, **kwargs):
+        thr = Thread(target=f, args=args, kwargs=kwargs)
+        thr.start()
+
+    return wrapper
+
+
 
 
 def exectask(request, task_id=0):
@@ -259,3 +271,8 @@ def exectask(request, task_id=0):
                     #         continue
                     new_f.write(line)
     return render(request, 'performance/taskresult.html')
+
+
+def taskresult(request):
+    taskresult_list = TaskResult.objects.all()
+    return render(request, 'performance/taskresult.html', locals())

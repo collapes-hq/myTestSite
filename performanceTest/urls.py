@@ -22,9 +22,11 @@ urlpatterns = [
     url(r'performanceTest/getServerCount/$', view=views.getServerCount),
     url(r'performanceTest/savePlan/$', view=views.saveplan),
     url(r'performanceTest/deltask/$', view=views.deltask),
+    url(r'performanceTest/taskresultlist/$', view=views.taskresult),
     url(r'performanceTest/getavailbleserver/', view=views.getavalibleserver),
     # url(r'performanceTest/indextest/(?P<task_name>[\w-]+)/$', view=views.indextest, name='paramtest'),
     url(r'^performanceTest/indextest/(?P<task_id>[\d]{0,4})/$', view=views.indextest, name='paramtest'),
     url(r'^performanceTest/exectask/(?P<task_id>[\d]{0,4})/$', view=views.exectask, name='tasktest'),
+
 
 ]

@@ -53,8 +53,18 @@ class ServerInfo(models.Model):
 
 
 class TaskResult(models.Model):
-    task_id = models.IntegerField()
+    task_id = models.IntegerField(null=True, blank=True)
     task_name = models.CharField(max_length=256, null=True, blank=True)
     exec_device = models.ForeignKey(ServerInfo, null=True, verbose_name='所选压测机', on_delete=models.SET_NULL)
-    c_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    sampleCounts = models.IntegerField(null=True, blank=True, verbose_name='请求总数')
+    avgResTime = models.FloatField(null=True, blank=True, verbose_name='平均响应时间')
+    madianResTime = models.FloatField(null=True, blank=True, verbose_name='中位响应时间')
+    TPS = models.FloatField(null=True, blank=True, verbose_name='tps/qps')
+    errorCounts = models.IntegerField(null=True, blank=True, verbose_name='错误总数')
+    errorPct = models.FloatField(null=True, blank=True, verbose_name='错误率')
     s_time = models.DateTimeField(auto_now=True, verbose_name='变更时间')
+
+    class Mate:
+        verbose_name = '压测结果信息表'
+        verbose_name_plural = '压测结果信息表'
+        ordering = ['-s_time']

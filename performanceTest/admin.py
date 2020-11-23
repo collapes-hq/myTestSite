@@ -6,3 +6,4 @@ from performanceTest import models
 admin.site.register(models.ServerInfo)
 admin.site.register(models.TaskList)
 admin.site.register(models.BusiLine)
+admin.site.register(models.TaskResult)

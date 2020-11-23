@@ -1,7 +1,82 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}压测结果列表页{% endblock %}
-
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
 {% block content %}
-    <h1>测试中。。。。。。。。。。。。</h1>
-{% endblock %} #}
+        <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+
+
+                    <table class="table table-bordered" id="tasktable">
+                        <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>任务名称</th>
+                            <th>SampleCounts</th>
+                            <th>AvgResTime</th>
+                            <th>MedianResTime</th>
+                            <th>TPS/QPS</th>
+                            <th>ErrorCounts</th>
+                            <th>ErrorPct</th>
+                            <th>执行时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for taskresult in taskresult_list %}
+                            <tr>
+
+                                <td class="align-middle">{{ taskresult.task_id }}</td>
+                                <td class="align-middle">{{ taskresult.task_name }}</td>
+                                <td class="align-middle">{{ taskresult.sampleCounts }}</td>
+                                <td class="align-middle">{{ taskresult.avgResTime }}</td>
+                                <td class="align-middle">{{ taskresult.madianResTime }}</td>
+                                <td class="align-middle">{{ taskresult.TPS }}</td>
+                                <td class="align-middle">{{ taskresult.errorCounts }}</td>
+                                <td class="align-middle">{{ taskresult.errorPct }}</td>
+                                <td class="align-middle">{{ taskresult.s_time|date:"Y/m/d H:m:s" }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-justified " role="group" aria-label="...">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'performanceTest:tasktest' task.task_id %}"
+                                               class="btn btn-primary">详情</a>
+                                        </div>
+
+                                    </div>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'vendor/bootstrap/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(function () {
+            $('#tasktable').DataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            })
+
+        });
+
+    </script>
+{% endblock %}
+
