@@ -69,7 +69,9 @@ def saveapi(request):
 
 def addcase(request, api_id=0):
     api_id = api_id
-    api = apiInfo.objects.filter(api_id=api_id)
-    print(type(api.first()))
-    print(type(api.first().api_headers))
+    # api = apiInfo.objects.filter(api_id=api_id)
+    # print(type(api.first()))
+    # print(type(api.first().api_headers))
+
+    api_info = apiInfo.objects.get(api_id=api_id)
     return render(request, 'addcase.html', locals())

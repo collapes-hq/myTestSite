@@ -1,5 +1,288 @@
 {% extends 'base.html' %}
 {% block title %}新增案例{% endblock %}
 {% block content %}
-    <h1>test.....</h1>
+    <div class="card">
+        <div class="card-header">
+            <h2><span class="badge badge-secondary">接口信息</span></h2>
+        </div>
+        <div class="card-body">
+            <form id="apiform" class="needs-validation" novalidate>
+
+                <div class="form-group row">
+                    <label for="apiname" class="col-sm-1 col-form-label">接口名称</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="apiname" name="apiname"
+                               value="{{ api_info.api_name|default:'' }}" required disabled>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label for="apiurl" class="col-sm-1 col-form-label">接口地址</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="apiurl" value="{{ api_info.api_url|default:'' }}"
+                               name="apiurl" required disabled>
+                    </div>
+                </div>
+
+
+                <div id="addheader" style="display: none">
+                    <div class="form-group row" id="headeraddon">
+                        <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
+                        <div class="col-sm-2">
+                            <input type="text" aria-label="key" class="form-control" placeholder="key" name="headerkey"
+                            >
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" aria-label="value" class="form-control" placeholder="value"
+                                   name="headervalue">
+                        </div>
+                        <div class="col-sm-1 ml-0">
+                            <button type="button" class="btn btn-default" id="delnew">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-dash-circle"
+                                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <label for="busi" class="col-sm-1 col-form-label">业务线</label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" id="busi" name="busi" required disabled>
+                            <option selected disabled value="">Choose...</option>
+                            {% for busi in busi_line %}
+                                <option value="{{ busi.busi_id }}" {% if api_info.api_busi.busi_id == busi.busi_id %}
+                                        selected {% endif %} >{{ busi.busi_name }}</option>
+                            {% endfor %}
+
+
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <label for="method" class="col-sm-1 col-form-label">请求方式</label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" id="method" name="method" required disabled>
+                            <option selected disabled value="">Choose...</option>
+                            {% if api_info.api_type == 0 %}
+                                <option value="0" selected>GET</option>
+                                <option value="1">POST</option>
+                            {% else %}
+                                <option value="0">GET</option>
+                                <option value="1" selected>POST</option>
+                            {% endif %}
+
+
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row ">
+                        <legend class="col-form-label col-sm-1 pt-0">正文格式</legend>
+                        <div class="col-sm-8 ">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="contenttype" id="gridRadios1"
+                                       value="1" {% if api_info.api_contenttype == 1 %} checked {% endif %} disabled>
+                                <label class="form-check-label" for="gridRadios1">
+                                    NONE
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="contenttype" id="gridRadios2"
+                                       value="2" {% if api_info.api_contenttype == 2 %} checked {% endif %} disabled>
+                                <label class="form-check-label" for="gridRadios2">
+                                    URL-ENCODE
+                                </label>
+                            </div>
+                            <div class="form-check ">
+                                <input class="form-check-input" type="radio" name="contenttype" id="gridRadios3"
+                                       value="3" {% if api_info.api_contenttype == 3 %} checked {% endif %} disabled>
+                                <label class="form-check-label" for="gridRadios3">
+                                    JSON
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {#                <div class="form-group row">#}
+                {#                    <div class="col-sm-1">Checkbox</div>#}
+                {#                    <div class="col-sm-8">#}
+                {#                        <div class="form-check">#}
+                {#                            <input class="form-check-input" type="checkbox" id="gridCheck1">#}
+                {#                            <label class="form-check-label" for="gridCheck1">#}
+                {#                                Example checkbox#}
+                {#                            </label>#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
+
+                <hr>
+                <h2><span class="badge badge-secondary">用例信息</span></h2>
+                <hr>
+                <div class="form-group row">
+                    <label for="apicasename" class="col-sm-1 col-form-label">用例名称</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="apicasename" name="apicasename"
+                               placeholder="请输入用例名称"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="apicasedesc" class="col-sm-1 col-form-label">用例描述</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="apicasedesc" name="apicasedesc"
+                               placeholder="请输入用例描述"
+                               required>
+                    </div>
+                </div>
+
+                {% if headers %}
+
+                    {% for key,value in headers.items %}
+
+                        {% if forloop.first %}
+                            <div class="form-group row" id="headerparam">
+                                <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
+                                <div class="col-sm-2">
+                                    <input type="text" aria-label="key" class="form-control" name="headerkey"
+                                           value="{{ key|default:'' }}"
+                                           required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" aria-label="value" class="form-control" name="headervalue"
+                                           value="{{ value }}" required>
+                                </div>
+                                <div class="col-sm-1 ml-0">
+                                    <button type="button" class="btn btn-default" id="addnew">
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
+                                             fill="currentColor"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <div class="form-group row" id="headeraddon">
+                                <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
+                                <div class="col-sm-2">
+                                    <input type="text" aria-label="key" class="form-control" value={{ key }}
+                                            name="headerkey"
+                                    >
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" aria-label="value" class="form-control" value={{ value }}
+                                            name="headervalue">
+                                </div>
+                                <div class="col-sm-1 ml-0">
+                                    <button type="button" class="btn btn-default" id="delnew">
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-dash-circle"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% endif %}
+
+                    {% endfor %}
+                {% else %}
+                    <div class="form-group row" id="headerparam">
+                        <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
+                        <div class="col-sm-2">
+                            <input type="text" aria-label="key" class="form-control" name="headerkey" placeholder="key"
+                                   required>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" aria-label="value" class="form-control" name="headervalue"
+                                   placeholder="value" required>
+                        </div>
+                        <div class="col-sm-1 ml-0">
+                            <button type="button" class="btn btn-default" id="addnew">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
+                                     fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path fill-rule="evenodd"
+                                          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="form-group row">
+                    <label for="apicontent" class="col-sm-1 col-form-label">正文内容</label>
+                    <div class="col-sm-8">
+                        <textarea class="form-control" id="apicontent" name="apicontent" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(function () {
+            $('#addnew').click(function () {
+                $('#headerparam').after($('#addheader').html())
+
+            });
+            $('#apiform').on('click', "#delnew", function () {
+                $(this).parent().parent().remove()
+            });
+
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            console.log(1);
+                            event.preventDefault();
+                            event.stopPropagation();
+                            form.classList.add('was-validated');
+                        } else {
+                            event.preventDefault();
+                            console.log(2);
+                            submitFormData()
+                        }
+
+                    }, false);
+                });
+            }, false);
+        })
+
+    </script>
 {% endblock %}

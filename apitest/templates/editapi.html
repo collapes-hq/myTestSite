@@ -162,8 +162,13 @@
                     <div class="col-sm-3">
                         <select class="custom-select" id="method" name="method" required>
                             <option selected disabled value="">Choose...</option>
-                            <option value="0">GET</option>
-                            <option value="1">POST</option>
+                            {% if api_info.api_type == 0 %}
+                                <option value="0" selected>GET</option>
+                                <option value="1">POST</option>
+                            {% else %}
+                                <option value="0" >GET</option>
+                                <option value="1" selected>POST</option>
+                            {% endif %}
 
 
                         </select>
@@ -175,21 +180,21 @@
                         <div class="col-sm-8 ">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="contenttype" id="gridRadios1"
-                                       value="1" checked>
+                                       value="1" {% if api_info.api_contenttype == 1 %} checked {% endif %}>
                                 <label class="form-check-label" for="gridRadios1">
                                     NONE
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="contenttype" id="gridRadios2"
-                                       value="2">
+                                       value="2" {% if api_info.api_contenttype == 2 %} checked {% endif %}>
                                 <label class="form-check-label" for="gridRadios2">
                                     URL-ENCODE
                                 </label>
                             </div>
                             <div class="form-check ">
                                 <input class="form-check-input" type="radio" name="contenttype" id="gridRadios3"
-                                       value="3">
+                                       value="3" {% if api_info.api_contenttype == 3 %} checked {% endif %}>
                                 <label class="form-check-label" for="gridRadios3">
                                     JSON
                                 </label>
