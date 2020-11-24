@@ -12,7 +12,8 @@
                 <div class="form-group row">
                     <label for="apiname" class="col-sm-1 col-form-label">接口名称</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="apiname" name="apiname" value="{{ api_info.api_name|default:'' }}" required>
+                        <input type="text" class="form-control" id="apiname" name="apiname"
+                               value="{{ api_info.api_name|default:'' }}" required>
                     </div>
                 </div>
 
@@ -20,40 +21,101 @@
                 <div class="form-group row">
                     <label for="apiurl" class="col-sm-1 col-form-label">接口地址</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="apiurl" value="{{ api_info.api_url|default:'' }}" name="apiurl" required>
+                        <input type="text" class="form-control" id="apiurl" value="{{ api_info.api_url|default:'' }}"
+                               name="apiurl" required>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="apidesc" class="col-sm-1 col-form-label">接口描述</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="apidesc" name="apidesc" value="{{ api_info.api_apidesc|default:'' }}" required>
+                        <input type="text" class="form-control" id="apidesc" name="apidesc"
+                               value="{{ api_info.api_apidesc|default:'' }}" required>
                     </div>
                 </div>
+                {% if headers %}
 
-                <div class="form-group row" id="headerparam">
-                    <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
-                    <div class="col-sm-2">
-                        <input type="text" aria-label="key" class="form-control" name="headerkey" placeholder="key"
-                               required>
+                    {% for key,value in headers.items %}
+
+                        {% if forloop.first %}
+                            <div class="form-group row" id="headerparam">
+                                <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
+                                <div class="col-sm-2">
+                                    <input type="text" aria-label="key" class="form-control" name="headerkey"
+                                           value="{{ key|default:'' }}"
+                                           required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" aria-label="value" class="form-control" name="headervalue"
+                                            value="{{ value }}" required>
+                                </div>
+                                <div class="col-sm-1 ml-0">
+                                    <button type="button" class="btn btn-default" id="addnew">
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
+                                             fill="currentColor"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <div class="form-group row" id="headeraddon">
+                                <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
+                                <div class="col-sm-2">
+                                    <input type="text" aria-label="key" class="form-control" value={{ key }}
+                                           name="headerkey"
+                                    >
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" aria-label="value" class="form-control" value={{ value }}
+                                           name="headervalue">
+                                </div>
+                                <div class="col-sm-1 ml-0">
+                                    <button type="button" class="btn btn-default" id="delnew">
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-dash-circle"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% endif %}
+
+                    {% endfor %}
+                {% else %}
+                    <div class="form-group row" id="headerparam">
+                        <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
+                        <div class="col-sm-2">
+                            <input type="text" aria-label="key" class="form-control" name="headerkey" placeholder="key"
+                                   required>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" aria-label="value" class="form-control" name="headervalue"
+                                   placeholder="value" required>
+                        </div>
+                        <div class="col-sm-1 ml-0">
+                            <button type="button" class="btn btn-default" id="addnew">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
+                                     fill="currentColor"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path fill-rule="evenodd"
+                                          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <input type="text" aria-label="value" class="form-control" name="headervalue"
-                               placeholder="value" required>
-                    </div>
-                    <div class="col-sm-1 ml-0">
-                        <button type="button" class="btn btn-default" id="addnew">
-                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
-                                 fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                <path fill-rule="evenodd"
-                                      d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                {% endif %}
 
                 <div id="addheader" style="display: none">
                     <div class="form-group row" id="headeraddon">
@@ -86,7 +148,8 @@
                         <select class="custom-select" id="busi" name="busi" required>
                             <option selected disabled value="">Choose...</option>
                             {% for busi in busi_line %}
-                                <option value="{{ busi.busi_id }}" {% if api_info.api_busi.busi_id == busi.busi_id %} selected {% endif %} >{{ busi.busi_name }}</option>
+                                <option value="{{ busi.busi_id }}" {% if api_info.api_busi.busi_id == busi.busi_id %}
+                                        selected {% endif %} >{{ busi.busi_name }}</option>
                             {% endfor %}
 
 
@@ -138,7 +201,7 @@
                 <div class="form-group row">
                     <label for="apicontent" class="col-sm-1 col-form-label">正文内容</label>
                     <div class="col-sm-8">
-                        <textarea class="form-control" id="apicontent" name="apicontent" > </textarea>
+                        <textarea class="form-control" id="apicontent" name="apicontent"> </textarea>
                     </div>
                 </div>
 
@@ -214,7 +277,7 @@
                     data: t,
                     success: function (resp) {
                         if (resp.returncode === 200) {
-                            setTimeout(window.location.href='/api/manage',5000)
+                            setTimeout(window.location.href = '/api/manage', 5000)
                         }
 
                     }

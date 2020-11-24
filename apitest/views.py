@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from apitest.models import apiInfo
 from performanceTest.models import BusiLine
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 # Create your views here.
@@ -14,15 +15,27 @@ def apimanage(request):
     return render(request, 'apimanage.html', locals())
 
 
-def editapi(request,api_id=0):
+def editapi(request, api_id=0):
     if api_id == 0:
         busi_line = BusiLine.objects.all()
         return render(request, 'editapi.html', locals())
     else:
         busi_line = BusiLine.objects.all()
-        api_info = apiInfo.objects.get(api_id=api_id)
-        print(api_info)
-        return render(request, 'editapi.html', locals())
+        try:
+            api_info = apiInfo.objects.get(api_id=api_id)
+            print(api_info)
+            headers = {}
+
+            if api_info.api_headers:
+                try:
+                    headers = eval(api_info.api_headers)
+                    print(type(headers))
+                except Exception as e:
+                    print(e)
+                return render(request, 'editapi.html',
+                              {"api_info": api_info, "busi_line": busi_line, "headers": headers})
+        except:
+            return render(request, 'editapi.html', locals())
 
 
 @csrf_exempt
@@ -51,4 +64,12 @@ def saveapi(request):
             s.save()
         else:
             return JsonResponse({"returncode": 200, "message": "接口名称已存在"})
-        return JsonResponse({'returncode': 200,"message": "接口保存成功"})
+        return JsonResponse({'returncode': 200, "message": "接口保存成功"})
+
+
+def addcase(request, api_id=0):
+    api_id = api_id
+    api = apiInfo.objects.filter(api_id=api_id)
+    print(type(api.first()))
+    print(type(api.first().api_headers))
+    return render(request, 'addcase.html', locals())
