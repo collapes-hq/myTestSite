@@ -53,6 +53,10 @@ class ServerInfo(models.Model):
 
 
 class TaskResult(models.Model):
+    status_chose =(
+        (0,'执行中'),
+        (1,'已结束')
+    )
     task_id = models.IntegerField(null=True, blank=True)
     task_name = models.CharField(max_length=256, null=True, blank=True)
     exec_device = models.ForeignKey(ServerInfo, null=True, verbose_name='所选压测机', on_delete=models.SET_NULL)
@@ -63,6 +67,7 @@ class TaskResult(models.Model):
     errorCounts = models.IntegerField(null=True, blank=True, verbose_name='错误总数')
     errorPct = models.FloatField(null=True, blank=True, verbose_name='错误率')
     s_time = models.DateTimeField(auto_now=True, verbose_name='变更时间')
+    status = models.IntegerField(choices=status_chose,null=True,blank=True,verbose_name='任务状态')
 
     class Mate:
         verbose_name = '压测结果信息表'

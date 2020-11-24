@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 import random
 import os, time
 from urllib.parse import urlparse
+from subprocess import Popen
+import subprocess
 
 
 # Create your views here.
@@ -166,8 +168,6 @@ def asyncTask(f):
     return wrapper
 
 
-
-
 def exectask(request, task_id=0):
     # 首先拿到数据库里此条压测的对应信息
     task_info = TaskList.objects.get(task_id=task_id)
@@ -270,9 +270,84 @@ def exectask(request, task_id=0):
                     #         new_f.write(new_line)
                     #         continue
                     new_f.write(line)
-    return render(request, 'performance/taskresult.html')
+    # 调执行的方法，异步执行，传递过去taskid参数1用于获取压测机IP，传递jmx文件的路径作为参数2
+    jmeterTest(task_id, new_task_jmx)
+
+    # 执行jmeter任务之前先要给表里插入数据 未执行完 默认是--
+    taskresult_list = TaskResult.objects.all()
+    return render(request, 'performance/taskresult.html', locals())
 
 
 def taskresult(request):
     taskresult_list = TaskResult.objects.all()
     return render(request, 'performance/taskresult.html', locals())
+
+
+def asyncdac(f):
+    def wrapper(*args, **kwargs):
+        thr = Thread(target=f, args=args, kwargs=kwargs)
+        thr.start()
+
+    return wrapper
+
+
+@asyncdac
+def jmeterTest(taskid, task_jmx):
+    cur_time = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime())
+    taskinfo = TaskList.objects.all().get(task_id=taskid)
+    remote_ip_id = taskinfo.exec_device_id
+    task_name = taskinfo.task_name
+    print(remote_ip_id)
+    remote_ip = ServerInfo.objects.get(server_id=remote_ip_id).server_ip
+    print(remote_ip)
+    result_jtl = os.path.join('/tmp/result', '{0}.jtl'.format(cur_time))
+    report_path = '/tmp/result/{cur_time}-report'.format(cur_time=cur_time)
+    command = "/home/jmeter/apache-jmeter-5.3/bin/jmeter -n -t {task_jmx} -R {remote_ip} -l {result_jtl} -e -o {report_path}".format(
+        task_jmx=task_jmx, remote_ip=remote_ip, result_jtl=result_jtl, report_path=report_path)
+    print(command)
+    try:
+        init = TaskResult.objects.create(task_id=taskid, task_name=task_name, status=0)
+        init.save()
+    except Exception as e:
+        print(e)
+        pass
+    try:
+        print("要执行命令了")
+        p = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=None,
+                             stderr=subprocess.STDOUT)
+
+        p.wait()
+        out = p.stdout.readlines()
+        print(out)
+    except Exception as e:
+        print("执行出错了")
+        pass
+    # 执行完毕将statistics.json文件中的数据写入到数据库
+    else:
+        if p.returncode == 0:
+            print("到这说明执行jmeter结束了")
+            staticFile = os.path.join(report_path, 'statistics.json')
+            with open(staticFile, 'r') as f:
+                result_dict = json.load(f)
+            print(result_dict)
+            sampleCounts = result_dict['Total']['sampleCount']
+            errorCounts = result_dict['Total']['errorCount']
+            avgResTime = result_dict['Total']['meanResTime']
+            TPS = result_dict['Total']['throughput']
+            errorPct = result_dict['Total']['errorPct']
+            madianResTime = result_dict['Total']['medianResTime']
+            print(sampleCounts)
+
+            try:
+                TaskResult.objects.filter(task_id=taskid).update(TPS=round(TPS, 2),
+                                                                 exec_device_id=remote_ip_id,
+                                                                 avgResTime=round(avgResTime, 2),
+                                                                 errorCounts=errorCounts,
+                                                                 sampleCounts=sampleCounts,
+                                                                 errorPct=errorPct,
+                                                                 madianResTime=madianResTime, status=1)
+
+            except Exception as e:
+                print(e)
+                pass
+    # print(p.stdout.readlines())
