@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
 {% endblock %}
 {% block content %}
-        <div class="card">
+    <div class="card">
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
@@ -42,8 +42,13 @@
                                 <td>
                                     <div class="btn-group btn-group-justified " role="group" aria-label="...">
                                         <div class="btn-group" role="group">
-                                            <a href="{% url 'performanceTest:tasktest' task.task_id %}"
-                                               class="btn btn-primary">详情</a>
+                                            {% if taskresult.status == 1 %}
+
+                                                <a href="{% url 'performanceTest:tasktest' task.task_id %}"
+                                                   class="btn btn-success">详情</a>
+                                            {% else %}
+                                                <a class="btn btn-warning">执行中</a>
+                                            {% endif %}
                                         </div>
 
                                     </div>
