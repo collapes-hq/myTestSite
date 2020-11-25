@@ -1,12 +1,40 @@
 {% extends 'base.html' %}
 {% block title %}新增案例{% endblock %}
+{% block css %}
+    <style>
+        pre {
+            outline: 1px solid #ccc;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .string {
+            color: green;
+        }
+
+        .number {
+            color: darkorange;
+        }
+
+        .boolean {
+            color: blue;
+        }
+
+        .null {
+            color: magenta;
+        }
+
+        .key {
+            color: red;
+        }
+    </style>{% endblock %}
 {% block content %}
     <div class="card">
         <div class="card-header">
             <h2><span class="badge badge-secondary">接口信息</span></h2>
         </div>
         <div class="card-body">
-            <form id="apiform" class="needs-validation" novalidate>
+            <form id="apicaseform" class="needs-validation" novalidate>
 
                 <div class="form-group row">
                     <label for="apiname" class="col-sm-1 col-form-label">接口名称</label>
@@ -28,14 +56,15 @@
 
                 <div id="addheader" style="display: none">
                     <div class="form-group row" id="headeraddon">
-                        <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
+                        <label for="" class="col-sm-1 col-form-label"></label>
                         <div class="col-sm-2">
-                            <input type="text" aria-label="key" class="form-control" placeholder="key" name="headerkey"
+                            <input type="text" aria-label="key" class="form-control" placeholder="参数名"
+                                   name="caseparamkey"
                             >
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" aria-label="value" class="form-control" placeholder="value"
-                                   name="headervalue">
+                            <input type="text" aria-label="value" class="form-control" placeholder="参数值"
+                                   name="caseparamvalue">
                         </div>
                         <div class="col-sm-1 ml-0">
                             <button type="button" class="btn btn-default" id="delnew">
@@ -56,7 +85,7 @@
                     <div class="col-sm-3">
                         <select class="custom-select" id="busi" name="busi" required disabled>
                             <option selected disabled value="">Choose...</option>
-                            {% for busi in busi_line %}
+                            {% for busi in busi_list %}
                                 <option value="{{ busi.busi_id }}" {% if api_info.api_busi.busi_id == busi.busi_id %}
                                         selected {% endif %} >{{ busi.busi_name }}</option>
                             {% endfor %}
@@ -91,7 +120,7 @@
                                 <input class="form-check-input" type="radio" name="contenttype" id="gridRadios1"
                                        value="1" {% if api_info.api_contenttype == 1 %} checked {% endif %} disabled>
                                 <label class="form-check-label" for="gridRadios1">
-                                    NONE
+                                    Form-data
                                 </label>
                             </div>
                             <div class="form-check">
@@ -145,106 +174,202 @@
                                required>
                     </div>
                 </div>
+                {% if api_info.api_contenttype == 1 %}
+                    {% if headers %}
 
-                {% if headers %}
+                        {% for key,value in headers.items %}
 
-                    {% for key,value in headers.items %}
+                            {% if forloop.first %}
+                                <div class="form-group row" id="headerparam">
+                                    <label for="inputPassword3" class="col-sm-1 col-form-label">请求参数</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" aria-label="key" class="form-control" name="caseparamkey"
+                                               value="{{ key|default:'' }}" placeholder="参数名"
+                                               required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" aria-label="value" class="form-control" name="caseparamvalue"
+                                               value="{{ value }}" placeholder="参数值" required>
+                                    </div>
+                                    <div class="col-sm-1 ml-0">
+                                        <button type="button" class="btn btn-default" id="addnew">
+                                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16"
+                                                 class="bi bi-plus-circle"
+                                                 fill="currentColor"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path fill-rule="evenodd"
+                                                      d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-                        {% if forloop.first %}
-                            <div class="form-group row" id="headerparam">
-                                <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
-                                <div class="col-sm-2">
-                                    <input type="text" aria-label="key" class="form-control" name="headerkey"
-                                           value="{{ key|default:'' }}"
-                                           required>
+                            {% else %}
+                                <div class="form-group row" id="headeraddon">
+                                    <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
+                                    <div class="col-sm-2">
+                                        <input type="text" aria-label="key" class="form-control" value={{ key }}
+                                                name="caseparamkey"
+                                        >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="text" aria-label="value" class="form-control" value={{ value }}
+                                                name="caseparamvalue">
+                                    </div>
+                                    <div class="col-sm-1 ml-0">
+                                        <button type="button" class="btn btn-default" id="delnew">
+                                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16"
+                                                 class="bi bi-dash-circle"
+                                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path fill-rule="evenodd"
+                                                      d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" aria-label="value" class="form-control" name="headervalue"
-                                           value="{{ value }}" required>
-                                </div>
-                                <div class="col-sm-1 ml-0">
-                                    <button type="button" class="btn btn-default" id="addnew">
-                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
-                                             fill="currentColor"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                            <path fill-rule="evenodd"
-                                                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                        </svg>
-                                    </button>
-                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+                    {% else %}
+                        <div class="form-group row" id="headerparam">
+                            <label for="inputPassword3" class="col-sm-1 col-form-label">请求参数</label>
+                            <div class="col-sm-2">
+                                <input type="text" aria-label="key" class="form-control" name="headerkey"
+                                       placeholder="参数名"
+                                       required>
                             </div>
-
-                        {% else %}
-                            <div class="form-group row" id="headeraddon">
-                                <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
-                                <div class="col-sm-2">
-                                    <input type="text" aria-label="key" class="form-control" value={{ key }}
-                                            name="headerkey"
-                                    >
-                                </div>
-                                <div class="col-sm-4">
-                                    <input type="text" aria-label="value" class="form-control" value={{ value }}
-                                            name="headervalue">
-                                </div>
-                                <div class="col-sm-1 ml-0">
-                                    <button type="button" class="btn btn-default" id="delnew">
-                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-dash-circle"
-                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                            <path fill-rule="evenodd"
-                                                  d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
-                                        </svg>
-                                    </button>
-                                </div>
+                            <div class="col-sm-4">
+                                <input type="text" aria-label="value" class="form-control" name="headervalue"
+                                       placeholder="参数值" required>
                             </div>
-
-                        {% endif %}
-
-                    {% endfor %}
+                            <div class="col-sm-1 ml-0">
+                                <button type="button" class="btn btn-default" id="addnew">
+                                    <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
+                                         fill="currentColor"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path fill-rule="evenodd"
+                                              d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    {% endif %}
                 {% else %}
-                    <div class="form-group row" id="headerparam">
-                        <label for="inputPassword3" class="col-sm-1 col-form-label">请求头</label>
-                        <div class="col-sm-2">
-                            <input type="text" aria-label="key" class="form-control" name="headerkey" placeholder="key"
-                                   required>
+                    <div class="form-group row">
+                        <label for="apicasecontent" class="col-sm-1 col-form-label">参数</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" id="apicontent" name="apicasecontent" required></textarea>
                         </div>
-                        <div class="col-sm-4">
-                            <input type="text" aria-label="value" class="form-control" name="headervalue"
-                                   placeholder="value" required>
-                        </div>
-                        <div class="col-sm-1 ml-0">
-                            <button type="button" class="btn btn-default" id="addnew">
-                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
+                    </div>
+                {% endif %}
+
+
+
+                <div class="form-group row">
+                    <div class="col-sm-1 ">
+                        <label for="apicheckpoint">检查点
+
+                        </label>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="checkexpress" data-toggle="tooltip" data-placement="top" data-html="true"
+                                   title="例如$.result.list[0].data.title">表达式 <a>
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle"
                                      fill="currentColor"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
                                           d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                    <path fill-rule="evenodd"
-                                          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                    <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
+                                    <circle cx="8" cy="4.5" r="1"/>
                                 </svg>
-                            </button>
+                            </a></label>
+                            <input type="text" aria-label="key" class="form-control" name="checkpointkey"
+                                   id="checkexpress"
+                                   value="{{ key|default:'' }}"
+                                   required>
                         </div>
                     </div>
-                {% endif %}
-                <div class="form-group row">
-                    <label for="apicontent" class="col-sm-1 col-form-label">正文内容</label>
-                    <div class="col-sm-8">
-                        <textarea class="form-control" id="apicontent" name="apicontent" required></textarea>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="checkresult">期望值</label>
+                            <input type="text" aria-label="value" class="form-control" name="checkpointkeyvalue"
+                                   id="checkresult"
+                                   value="{{ value }}" required>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-primary">保存</button>
-                    </div>
-                </div>
 
+                <div class="form-group row">
+                    <div class="mr-1 ml-3">
+                        <button type="reset" class="btn btn-dark">清空</button>
+                    </div>
+
+
+                    <div class="mr-1">
+                        <button type="submit" class="btn btn-dark">保存</button>
+                    </div>
+
+                    <div class="mr-1">
+                        <a class="btn btn-dark active" id="singlerequest">单次请求</a>
+                    </div>
+
+
+                </div>
 
             </form>
+
+            <div style="display: none" id="resulttabs">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="success-tab" data-toggle="tab" href="#successtab" role="tab"
+                           aria-controls="home" aria-selected="true">SUCCESS</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="failure-tab" data-toggle="tab" href="#failuretab" role="tab"
+                           aria-controls="profile" aria-selected="false">FAILURE</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#headercontent" role="tab"
+                           aria-controls="contact" aria-selected="false">请求头</a>
+                    </li>
+                </ul>
+                <br>
+                <div class="tab-content border-dark " id="myTabContent">
+                    <div class="tab-pane fade " id="successtab" role="tabpanel" aria-labelledby="home-tab"><pre
+                            id="successinfo"></pre>
+                    </div>
+                    <div class="tab-pane fade" id="failuretab" role="tabpanel" aria-labelledby="profile-tab">黄河入海流 <br>欲穷千里目
+                    </div>
+                    <div class="tab-pane fade" id="headercontent" role="tabpanel" aria-labelledby="contact-tab">{
+                        "Content-Length": "80",
+                        "Content-Hash": "3b2b2091d54babe337c5738de99cda95",
+                        "Server": "nginx/1.15.10",
+                        "Connection": "keep-alive",
+                        "LastUpdate": "1606287107",
+                        "Via": "kong/1.2.1",
+                        "X-Kong-Proxy-Latency": "1",
+                        "Cache-Control": "no-cache",
+                        "Date": "Wed, 25 Nov 2020 06:51:47 GMT",
+                        "Content-Type": "application/json;charset=UTF-8",
+                        "X-Kong-Upstream-Latency": "20"
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
+        <br>
+        <br>
+        <br>
+        <br>
     </div>
 
 
@@ -261,7 +386,7 @@
             $('#apiform').on('click', "#delnew", function () {
                 $(this).parent().parent().remove()
             });
-
+            $('[data-toggle="tooltip"]').tooltip();
             window.addEventListener('load', function () {
                 // Fetch all the forms we want to apply custom Bootstrap validation styles to
                 var forms = document.getElementsByClassName('needs-validation');
@@ -282,6 +407,70 @@
                     }, false);
                 });
             }, false);
+
+            $('#singlerequest').click(function () {
+                //获取参数
+                let formData = {};
+                let singlerequestParam = $('#apicaseform').serializeArray();
+                console.log(singlerequestParam);
+                $.each(singlerequestParam, function () {
+                    formData[this.name] = this.value;
+                });
+                console.log(formData);
+
+                // 发送请求
+                $.ajax({
+                    async: false,
+                    url: '/api/singlerequest/',
+                    method: 'POST',
+                    data: singlerequestParam,
+                    success: function (resp) {
+                        if (resp.returncode === 200) {
+                            $('#failure-tab').attr("class", 'nav-link disabled');
+                            ress={"returncode":200,"message":"haode"};
+                            res = JSON.stringify(ress,null,2);
+                            $('#successinfo').html(syntaxHighlight(ress));
+                            $('#successtab').attr("class", 'tab-pane fade active show');
+                            $('#resulttabs').show();
+                        } else {
+                            $('#success-tab').attr("class", 'nav-link disabled');
+                            $('#resulttabs').show()
+                        }
+
+                    }
+
+                });
+
+            });
+
+            function submitFormData() {
+                let path = window.location.pathname;
+                let params = $
+
+            }
+
+
+            function syntaxHighlight(json) {
+                if (typeof json != 'string') {
+                    json = JSON.stringify(json, undefined, 2);
+                }
+                json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    var cls = 'number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'key';
+                        } else {
+                            cls = 'string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+            }
         })
 
     </script>

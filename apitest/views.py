@@ -72,6 +72,15 @@ def addcase(request, api_id=0):
     # api = apiInfo.objects.filter(api_id=api_id)
     # print(type(api.first()))
     # print(type(api.first().api_headers))
-
+    busi_list = BusiLine.objects.all()
     api_info = apiInfo.objects.get(api_id=api_id)
     return render(request, 'addcase.html', locals())
+
+
+@csrf_exempt
+def singlerequest(request):
+    if request.method == 'POST':
+        apicasename = request.POST.get("apiname")
+        apicasedesc = request.POST.get("apicasedesc")
+        print(apicasename, apicasedesc)
+        return JsonResponse({'returncode': 200})
