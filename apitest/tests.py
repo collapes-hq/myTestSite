@@ -7,10 +7,13 @@ import subprocess
 
 import json
 
-a = {'123': '123', '234': '5234'}
-print(type(a))
-for k,v in a.items():
-    print(k,v)
+# a = {'123': '123', '234': '5234'}
+# print(type(a))
+# for k,v in a.items():
+#     print(k,v)
+# # #
+# # # print(json.loads(a))
 # #
-# # print(json.loads(a))
-#
+
+a = "/api/addcase/6/"
+print(a.split('/')[-2])

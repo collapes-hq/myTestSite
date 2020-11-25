@@ -114,7 +114,7 @@
                 </div>
                 <div class="form-group">
                     <div class="row ">
-                        <legend class="col-form-label col-sm-1 pt-0">正文格式</legend>
+                        <legend class="col-form-label col-sm-1 pt-0">参数格式</legend>
                         <div class="col-sm-8 ">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="contenttype" id="gridRadios1"
@@ -239,12 +239,12 @@
                         <div class="form-group row" id="headerparam">
                             <label for="inputPassword3" class="col-sm-1 col-form-label">请求参数</label>
                             <div class="col-sm-2">
-                                <input type="text" aria-label="key" class="form-control" name="headerkey"
+                                <input type="text" aria-label="key" class="form-control" name="caseparamkey"
                                        placeholder="参数名"
                                        required>
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" aria-label="value" class="form-control" name="headervalue"
+                                <input type="text" aria-label="value" class="form-control" name="caseparamvalue"
                                        placeholder="参数值" required>
                             </div>
                             <div class="col-sm-1 ml-0">
@@ -327,6 +327,21 @@
 
             </form>
 
+            <div class="modal fade" id="caseModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p class="text-center mb-0" id="info">
+                                <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                                用例保存成功，请到用例列表页查看
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <div style="display: none" id="resulttabs">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -383,7 +398,7 @@
                 $('#headerparam').after($('#addheader').html())
 
             });
-            $('#apiform').on('click', "#delnew", function () {
+            $('#apicaseform').on('click', "#delnew", function () {
                 $(this).parent().parent().remove()
             });
             $('[data-toggle="tooltip"]').tooltip();
@@ -427,11 +442,12 @@
                     success: function (resp) {
                         if (resp.returncode === 200) {
                             $('#failure-tab').attr("class", 'nav-link disabled');
-                            ress={"returncode":200,"message":"haode"};
-                            res = JSON.stringify(ress,null,2);
+                            ress = {"returncode": 200, "message": "haode"};
+                            res = JSON.stringify(ress, null, 2);
                             $('#successinfo').html(syntaxHighlight(ress));
                             $('#successtab').attr("class", 'tab-pane fade active show');
                             $('#resulttabs').show();
+
                         } else {
                             $('#success-tab').attr("class", 'nav-link disabled');
                             $('#resulttabs').show()
@@ -444,8 +460,28 @@
             });
 
             function submitFormData() {
-                let path = window.location.pathname;
-                let params = $
+                apicaseinfo = {};
+                apicaseinfo['path'] = window.location.pathname;
+                let params = $('#apicaseform').serializeArray();
+                console.log(params);
+                $.each(params, function () {
+                    apicaseinfo[this.name] = this.value
+                });
+                console.log(apicaseinfo);
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: '/api/savasapicase/',
+                    data: apicaseinfo,
+                    success: function (resp) {
+                        if (resp.returncode === 200) {
+                            $('#caseModal').modal('show');
+                            setTimeout("$('#caseModal').modal('hide')", 3000)
+                        } else {
+
+                        }
+                    }
+                })
 
             }
 

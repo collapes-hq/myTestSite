@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from apitest.models import apiInfo
+from apitest.models import apiInfo, apiCase
 from performanceTest.models import BusiLine
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -65,6 +65,36 @@ def saveapi(request):
         else:
             return JsonResponse({"returncode": 200, "message": "接口名称已存在"})
         return JsonResponse({'returncode': 200, "message": "接口保存成功"})
+
+@csrf_exempt
+def saveapicase(request):
+    if request.method == "POST":
+        api_id = int(request.POST.get('path').split('/')[-2])
+        print(api_id)
+        # 还要根据api之前录入的时候选的参数格式
+        apicase_name = request.POST.get('apicasename')
+        apicase_desc = request.POST.get('apicasedesc')
+        apicase_express = request.POST.get('checkpointkey')
+        apicase_except = request.POST.get('checkpointkeyvalue')
+        params_key = request.POST.getlist('caseparamkey')
+        params_value = request.POST.getlist('caseparamvalue')
+        params_dict = {}
+        for k, v in zip(params_key, params_value):
+            if k not in [None, ""] and v not in [None, ""]:
+                params_dict[k] = v
+        print(params_dict)
+        # 如果名字有重复的就认为已存在
+        if not apiCase.objects.filter(apicase_name=apicase_name):
+            try:
+                init = apiCase.objects.create(apicase_name=apicase_name, apicase_desc=apicase_desc,
+                                              apicase_express=apicase_express, apicase_except=apicase_except,
+                                              apicase_params=params_dict,case_api_id_id=api_id)
+                init.save()
+            except Exception as e:
+                print(e)
+                return JsonResponse({'returncode': 201, 'message': '保存失败'})
+            return JsonResponse({'returncode': 200, 'message': '保存成功'})
+
 
 
 def addcase(request, api_id=0):
