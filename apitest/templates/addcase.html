@@ -364,19 +364,8 @@
                     </div>
                     <div class="tab-pane fade" id="failuretab" role="tabpanel" aria-labelledby="profile-tab">黄河入海流 <br>欲穷千里目
                     </div>
-                    <div class="tab-pane fade" id="headercontent" role="tabpanel" aria-labelledby="contact-tab">{
-                        "Content-Length": "80",
-                        "Content-Hash": "3b2b2091d54babe337c5738de99cda95",
-                        "Server": "nginx/1.15.10",
-                        "Connection": "keep-alive",
-                        "LastUpdate": "1606287107",
-                        "Via": "kong/1.2.1",
-                        "X-Kong-Proxy-Latency": "1",
-                        "Cache-Control": "no-cache",
-                        "Date": "Wed, 25 Nov 2020 06:51:47 GMT",
-                        "Content-Type": "application/json;charset=UTF-8",
-                        "X-Kong-Upstream-Latency": "20"
-                        }
+                    <div class="tab-pane fade" id="headercontent" role="tabpanel" aria-labelledby="contact-tab"><pre
+                            id="successheader"></pre>
                     </div>
                 </div>
             </div>
@@ -427,6 +416,9 @@
                 //获取参数
                 let formData = {};
                 let singlerequestParam = $('#apicaseform').serializeArray();
+
+                singlerequestParam.push({name: "aa", value: "bbbbb"});
+
                 console.log(singlerequestParam);
                 $.each(singlerequestParam, function () {
                     formData[this.name] = this.value;
@@ -443,8 +435,23 @@
                         if (resp.returncode === 200) {
                             $('#failure-tab').attr("class", 'nav-link disabled');
                             ress = {"returncode": 200, "message": "haode"};
-                            res = JSON.stringify(ress, null, 2);
+
+                            resss = {
+                                "Content-Length": "80",
+                                "Content-Hash": "3b2b2091d54babe337c5738de99cda95",
+                                "Server": "nginx/1.15.10",
+                                "Connection": "keep-alive",
+                                "LastUpdate": "1606287107",
+                                "Via": "kong/1.2.1",
+                                "X-Kong-Proxy-Latency": "1",
+                                "Cache-Control": "no-cache",
+                                "Date": "Wed, 25 Nov 2020 06:51:47 GMT",
+                                "Content-Type": "application/json;charset=UTF-8",
+                                "X-Kong-Upstream-Latency": "20"
+                            };
                             $('#successinfo').html(syntaxHighlight(ress));
+                            $('#successheader').html(syntaxHighlight(resss));
+
                             $('#successtab').attr("class", 'tab-pane fade active show');
                             $('#resulttabs').show();
 
@@ -460,19 +467,18 @@
             });
 
             function submitFormData() {
-                apicaseinfo = {};
-                apicaseinfo['path'] = window.location.pathname;
-                let params = $('#apicaseform').serializeArray();
-                console.log(params);
-                $.each(params, function () {
-                    apicaseinfo[this.name] = this.value
-                });
+                apicaseinfo = {name: "path", value: ""};
+                apicaseinfo['value'] = window.location.pathname;
                 console.log(apicaseinfo);
+                let params = $('#apicaseform').serializeArray();
+                params.push(apicaseinfo);
+                console.log(params);
+
                 $.ajax({
                     async: false,
                     type: 'POST',
                     url: '/api/savasapicase/',
-                    data: apicaseinfo,
+                    data: params,
                     success: function (resp) {
                         if (resp.returncode === 200) {
                             $('#caseModal').modal('show');

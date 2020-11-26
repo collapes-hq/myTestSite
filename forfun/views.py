@@ -8,6 +8,9 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 def wordCloud(request):
     return render(request, 'wordCloud.html', locals())
 
+def blogpage(request):
+    return render(request, 'blog.html', locals())
+
 
 def servermanage(request):
     serverlist = ServerInfo.objects.all()

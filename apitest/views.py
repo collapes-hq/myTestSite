@@ -38,6 +38,11 @@ def editapi(request, api_id=0):
             return render(request, 'editapi.html', locals())
 
 
+def apicase(request):
+    apicases = apiCase.objects.all()
+    return render(request, 'apicase.html', locals())
+
+
 @csrf_exempt
 def saveapi(request):
     if request.method == "POST":
@@ -66,6 +71,7 @@ def saveapi(request):
             return JsonResponse({"returncode": 200, "message": "接口名称已存在"})
         return JsonResponse({'returncode': 200, "message": "接口保存成功"})
 
+
 @csrf_exempt
 def saveapicase(request):
     if request.method == "POST":
@@ -88,13 +94,12 @@ def saveapicase(request):
             try:
                 init = apiCase.objects.create(apicase_name=apicase_name, apicase_desc=apicase_desc,
                                               apicase_express=apicase_express, apicase_except=apicase_except,
-                                              apicase_params=params_dict,case_api_id_id=api_id)
+                                              apicase_params=params_dict, case_api_id_id=api_id)
                 init.save()
             except Exception as e:
                 print(e)
                 return JsonResponse({'returncode': 201, 'message': '保存失败'})
             return JsonResponse({'returncode': 200, 'message': '保存成功'})
-
 
 
 def addcase(request, api_id=0):

@@ -11,6 +11,7 @@ from forfun import views
 
 urlpatterns = [
     url('^forfun/wordCloud/', view=views.wordCloud),
+    url('^forfun/blog/', view=views.blogpage),
     url('^forfun/servermanage/', view=views.servermanage),
     url('^forfun/delserver/', view=views.delserver),
     url('^forfun/saveServerInfo/', view=views.saveServerInfo),

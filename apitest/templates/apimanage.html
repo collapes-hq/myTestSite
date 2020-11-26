@@ -30,6 +30,7 @@
                             <th>业务线</th>
                             <th>方法类型</th>
                             <th>请求地址</th>
+                            <th>用例数</th>
                             <th>更新时间</th>
                             <th>操作</th>
                         </tr>
@@ -44,7 +45,7 @@
                                 <td class="align-middle">{{ api.get_api_type_display }}</td>
                                 <td class="text-truncate align-middle"
                                     style="max-width: 350px;">{{ api.api_url }}</td>
-
+                                <td class="align-middle">6</td>
                                 <td class="align-middle">{{ api.api_c_time|date:"Y/m/d H:m:s" }}</td>
 
                                 <td>
@@ -104,7 +105,7 @@
                     info: "总共_PAGES_ 页，显示第_START_ 到第 _END_ ，筛选之后得到 _TOTAL_ 条，初始_MAX_ 条 ",//左下角的信息显示，大写的词为关键字。
                     infoEmpty: "0条记录",//筛选为空时左下角的显示。
                     infoFiltered: "", //筛选之后的左下角筛选提示(另一个是分页信息显示，在上面的info中已经设置，所以可以不显示)，
-                    search:"搜索",
+                    search: "搜索",
                 }
 
             })

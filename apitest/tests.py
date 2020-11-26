@@ -4,7 +4,6 @@ from django.test import TestCase
 
 import subprocess
 
-
 import json
 
 # a = {'123': '123', '234': '5234'}
@@ -15,5 +14,5 @@ import json
 # # # print(json.loads(a))
 # #
 
-a = "/api/addcase/6/"
-print(a.split('/')[-2])
+# a = "/api/addcase/6/"
+# print(a.split('/'))

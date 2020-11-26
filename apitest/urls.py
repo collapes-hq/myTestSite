@@ -9,6 +9,7 @@ urlpatterns = [
     url('manage/', view=views.apimanage),
     url('editapi/$', view=views.editapi),
     url('saveapi/', view=views.saveapi),
+    url('apicase/', view=views.apicase),
     url('singlerequest/', view=views.singlerequest),
     url('savasapicase/', view=views.saveapicase),
     url(r'editapi/(?P<api_id>[\d]{0,4})/$', view=views.editapi, name='jumpApi'),
