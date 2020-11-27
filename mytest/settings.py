@@ -136,3 +136,9 @@ EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = 'haoqiang223@sina.com'
 EMAIL_HOST_PASSWORD = ''
+
+
+# 网站默认设置和上下文信息
+SITE_END_TITLE = '网站的名称，如TendCode'
+SITE_DESCRIPTION = '网站描述'
+SITE_KEYWORDS = '网站关键词，多个词用英文逗号隔开'

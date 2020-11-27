@@ -2,15 +2,21 @@ from django.shortcuts import render
 from performanceTest.models import ServerInfo
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-
+from forfun import models
 
 # Create your views here.
 def wordCloud(request):
     return render(request, 'wordCloud.html', locals())
 
+
 def blogpage(request):
+    articles = models.Article.objects.all()
+    categories =models.Category.objects.all()
+    tag_list = models.Tag.objects.all()
     return render(request, 'blog.html', locals())
 
+def detail(request):
+    pass
 
 def servermanage(request):
     serverlist = ServerInfo.objects.all()
