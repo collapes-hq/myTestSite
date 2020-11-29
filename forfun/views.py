@@ -3,6 +3,8 @@ from performanceTest.models import ServerInfo
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from forfun import models
+import markdown
+
 
 # Create your views here.
 def wordCloud(request):
@@ -11,12 +13,29 @@ def wordCloud(request):
 
 def blogpage(request):
     articles = models.Article.objects.all()
-    categories =models.Category.objects.all()
+    categories = models.Category.objects.all()
     tag_list = models.Tag.objects.all()
     return render(request, 'blog.html', locals())
 
-def detail(request):
-    pass
+
+def detail(request, slug=''):
+    slug = slug
+    article = models.Article.objects.get(slug=slug)
+
+    md = markdown.Markdown(extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
+    article.body = md.convert(article.body)
+
+    return render(request, 'detailpage.html', locals())
+
+
+"""
+extensions=[
+        'markdown.extensions.extra',
+        'markdown.extensions.codehilite',
+        TocExtension(slugify=slugify),
+    ]
+"""
+
 
 def servermanage(request):
     serverlist = ServerInfo.objects.all()

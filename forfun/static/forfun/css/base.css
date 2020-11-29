@@ -11,7 +11,7 @@
 /* base css-------------------------------------------------*/
 body {
     background: #f4f4f4;
-    padding-top:4.8rem;
+    
     display: -webkit-flex; /* Safari */
     display: flex;
     min-height: 100vh;
@@ -101,67 +101,11 @@ blockquote {
     border-color: #f5c6cb;
 }
 /* top navbar-------------------------------------------------*/
-.blog-navbar {
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.05);
-}
-#navbarDropdown .avatar {
-    border-radius: 50%;
-    width:40px;
-}
-.get-msg {
-    font-size:13px;
-    position: absolute;
-    top: 5px;
-    left: 32px;
-    z-index: 3;
-    color: #fff;
-    display: block;
-    min-width: 16px;
-    padding: 0 3px;
-    height: 16px;
-    border-radius: 16px;
-    line-height: 16px;
-    background: red;
-}
-.blog-navbar .dropdown-menu {
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
-}
-.blog-navbar .navbar-toggler {
-    color: rgba(0,0,0,.5);
-    border-color: rgba(0,0,0,.1);
-}
-.blog-navbar .navbar-toggler-icon {
-    background-image:url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E")
-}
-.nav-item a.active {
-    color: #ea6f5a;
-}
+
+
+
 /*to top+++++++++++++++++++++++++++++++++++++++++++++++++*/
-#to-top {
-    position: fixed;
-    bottom: 4em;
-    right: 5%;
-    height: 36px;
-    width: 36px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    background-color: #34495e;
-    top: auto;
-    display:none;
-    cursor: pointer;
-    color: #fff;
-    opacity: .4;
-    z-index:9999;
-}
-#to-top:hover{
-    opacity: .9;
-}
-#to-top i {
-    font-size: 18px;
-    line-height: 30px;
-    text-align: center;
-    display: block;
-}
+
 /*carousel---------------------------------------------*/
 .carousel-indicators li {
     width: 10px;
