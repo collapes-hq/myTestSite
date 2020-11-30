@@ -14,7 +14,7 @@
                         <div class="media mb-1 mb-sm-2 p-2 p-lg-3" style="background-color: #fff;">
                             <div class="align-self-center mr-2 mr-lg-3 w-25 modal-open">
                                 <a href="{{ article.get_absolute_url }}" target="_blank">
-                                    <img class="w-100 article-img" src="{% static '/forfun/pic/summary.png'%}"
+                                    <img class="w-100 article-img" src="{{ article.img_link }}"
                                          alt="{{ article.title }}">
                                 </a>
                             </div>

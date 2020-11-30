@@ -416,53 +416,61 @@
                 //获取参数
                 let formData = {};
                 let singlerequestParam = $('#apicaseform').serializeArray();
-
-                singlerequestParam.push({name: "aa", value: "bbbbb"});
-
+                // 获取已经带出来的参数，因为序列化没办法 把disabled元素取出来
+                let url_path = $('#apiurl').val();
+                let method = $('#method option:selected').val();
+                singlerequestParam.push({name: "path", value: url_path});
+                singlerequestParam.push({name: "method", value: method});
                 console.log(singlerequestParam);
+                //循环序列化成数组的表单数据 然后添加到字典formData中
                 $.each(singlerequestParam, function () {
                     formData[this.name] = this.value;
                 });
                 console.log(formData);
 
-                // 发送请求
-                $.ajax({
-                    async: false,
-                    url: '/api/singlerequest/',
-                    method: 'POST',
-                    data: singlerequestParam,
-                    success: function (resp) {
-                        if (resp.returncode === 200) {
-                            $('#failure-tab').attr("class", 'nav-link disabled');
-                            ress = {"returncode": 200, "message": "haode"};
+                //自己写验证规则
+                //let forms = $('.needs-validation');
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
 
-                            resss = {
-                                "Content-Length": "80",
-                                "Content-Hash": "3b2b2091d54babe337c5738de99cda95",
-                                "Server": "nginx/1.15.10",
-                                "Connection": "keep-alive",
-                                "LastUpdate": "1606287107",
-                                "Via": "kong/1.2.1",
-                                "X-Kong-Proxy-Latency": "1",
-                                "Cache-Control": "no-cache",
-                                "Date": "Wed, 25 Nov 2020 06:51:47 GMT",
-                                "Content-Type": "application/json;charset=UTF-8",
-                                "X-Kong-Upstream-Latency": "20"
-                            };
-                            $('#successinfo').html(syntaxHighlight(ress));
-                            $('#successheader').html(syntaxHighlight(resss));
+                    if (form.checkValidity() === false) {
+                        console.log(1);
+                        event.preventDefault();
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                    } else {
 
-                            $('#successtab').attr("class", 'tab-pane fade active show');
-                            $('#resulttabs').show();
+                        console.log(2);
+                        // 发送请求
+                        $.ajax({
+                            async: false,
+                            url: '/api/singlerequest/',
+                            method: 'POST',
+                            data: singlerequestParam,
+                            success: function (resp) {
+                                if (resp.returncode === 200) {
+                                    $('#failure-tab').attr("class", 'nav-link disabled');
+                                    ress = resp.result;
 
-                        } else {
-                            $('#success-tab').attr("class", 'nav-link disabled');
-                            $('#resulttabs').show()
-                        }
+                                    resss = resp.request_header;
+                                    $('#successinfo').html(syntaxHighlight(ress));
+                                    $('#successheader').html(syntaxHighlight(resss));
 
+                                    $('#successtab').attr("class", 'tab-pane fade active show');
+                                    $('#resulttabs').show();
+
+                                } else {
+                                    $('#success-tab').attr("class", 'nav-link disabled');
+                                    $('#resulttabs').show()
+                                }
+
+                            }
+
+                        });
                     }
-
                 });
+
 
             });
 

@@ -4,6 +4,7 @@ from apitest.models import apiInfo, apiCase
 from performanceTest.models import BusiLine
 from django.views.decorators.csrf import csrf_exempt
 import json
+import requests
 
 
 # Create your views here.
@@ -115,7 +116,27 @@ def addcase(request, api_id=0):
 @csrf_exempt
 def singlerequest(request):
     if request.method == 'POST':
-        apicasename = request.POST.get("apiname")
+        apicasename = request.POST.get("apicasename")
         apicasedesc = request.POST.get("apicasedesc")
-        print(apicasename, apicasedesc)
-        return JsonResponse({'returncode': 200})
+        params_key = request.POST.getlist('caseparamkey')
+        params_value = request.POST.getlist('caseparamvalue')
+        apicase_express = request.POST.get('checkpointkey')
+        apicase_except = request.POST.get('checkpointkeyvalue')
+        url_path = request.POST.get('path')
+        request_method = request.POST.get('method')
+        params_dict = {}
+        for k, v in zip(params_key, params_value):
+            if k not in [None, ""] and v not in [None, ""]:
+                params_dict[k] = v
+        print(params_dict)
+        if int(request_method) == 0:
+            print(222)
+            response = requests.get(url=url_path, headers={"a": "b"})
+            statecode = response.status_code
+            result = json.loads(response.text)
+            header = eval(str(response.request.headers))
+            print(type(json.dumps(eval(str(response.request.headers)))))
+            print(header)
+            print(type(response.text))
+            # print(apicasename, apicasedesc,url_path,request_method)
+            return JsonResponse({'returncode': statecode, "result": result, 'request_header': header})
