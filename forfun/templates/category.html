@@ -1,32 +1,36 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}hq's blog{% endblock %}
+{% block title %}{{ category.name }}{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static 'forfun/css/base.css' %}">
 {% endblock %}
 {% block content %}
-
     <div class="container">
         <div class="row">
-            <div class="col-md-8 " >
-                <div class="summary-list">
-                        {% for article in articles %}
+            <div class="col-lg-8">
+                <div class="description bg-white px-3 pt-3 pb-1">
+                    <p class="float-right mb-0">共<span class="mx-2 text-info">{{ articles|length }}</span>篇</p>
+                    <h1 class="f-17"><strong>文章分类：{{ category.name }}</strong></h1>
+                    <p class="f-16">{{ category.description }}</p>
+                </div>
+                <div class="summary-list mt-4">
+                    {% for article in articles %}
                         <div class="media mb-1 mb-sm-2 p-2 p-lg-3" style="background-color: #fff;">
                             <div class="align-self-center mr-2 mr-lg-3 w-25 modal-open">
                                 <a href="{{ article.get_absolute_url }}" target="_blank">
-                                    <img class="w-100 article-img" src="{% static '/forfun/pic/summary.png'%}"
+                                    <img class="w-100 article-img" src="{% static '/forfun/pic/summary.png' %}"
                                          alt="{{ article.title }}">
                                 </a>
                             </div>
                             <div class="media-body">
                                 <div class="text-muted mb-2 f-12">
 
-                                    <span>{{article.author }}</span>
+                                    <span>{{ article.author }}</span>
                                     <span><i
-                                            class="fa fa-calendar-times-o ml-2 mr-1"></i>{{ article.create_date}}</span>
+                                            class="fa fa-calendar-times-o ml-2 mr-1"></i>{{ article.create_date }}</span>
                                 </div>
                                 <h2 class="mt-0 font-weight-bold text-info f-18">
-                                    <a href="{{ article.get_absolute_url }}" target="_blank">{{ article.title}}</a>
+                                    <a href="{{ article.get_absolute_url }}" target="_blank">{{ article.title }}</a>
                                 </h2>
                                 <p class="d-none d-sm-block mb-2 f-15">{{ article.summary|truncatechars:64 }}</p>
                                 <p class="d-block d-sm-none mb-2 f-15">{{ article.summary|truncatechars:64 }}</p>
@@ -41,13 +45,11 @@
                             </div>
                         </div>
 
-                        {% endfor %}
+                    {% endfor %}
 
                 </div>
             </div>
-
-
-            <div class="col-md-4 ">
+            <div class="col-lg-4 mt-4">
                 <div class="card border-0 rounded-0 px-3 mb-2 mb-md-3 d-none d-lg-block" id="home-card">
                     <div class="card-header bg-white px-0">
                         <strong><i class="fa fa-paper-plane mr-2 f-17"></i>郝强-个人简介</strong>
@@ -62,6 +64,9 @@
                             </div>
                             <div class="row">
                                 <p class="text-md-center font-weight-bold "> 现居： 北京市-朝阳区</p>
+                            </div>
+                            <div class="row">
+                                <p class="text-md-center font-weight-bold "> 老婆： 小于</p>
                             </div>
                             <div class="row">
                                 <p class="text-md-center font-weight-bold "> Phone：13269791986</p>
@@ -95,17 +100,14 @@
                         <div class="tag-cloud">
 
                             {% for tag in tag_list %}
-                                <a  class="btn tags f-16" id="tag-{{ forloop.counter }}"
-                                   title="【{{ tag.name }}】标签下有{{ tag.total_num }}篇文章" >{{ tag.name }}</a>
+                                <a href="{{ tag.get_absolute_url }}" class="tags f-16" id="tag-{{ forloop.counter }}"
+                                   title="【{{ tag.name }}】标签下有{{ tag.total_num }}篇文章">{{ tag.name }}</a>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
-
     </div>
 
 {% endblock %}

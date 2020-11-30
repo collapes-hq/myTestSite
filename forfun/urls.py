@@ -19,6 +19,6 @@ urlpatterns = [
     url('^forfun/saveServerInfo/', view=views.saveServerInfo),
     # url(r'^article/(?P<slug>[\w-]+)/$', view=views.detail, name='detail'),  # 文章内容页
     path(r'article/<slug:slug>/', view=views.detail, name='detail'),  # 文章内容页
-    url(r'^category/(?P<slug>[\w-]+)/$', view=views.detail, name='category'),
+    path(r'category/<slug>/', view=views.category, name='category'),
     url(r'^tag/(?P<slug>[\w-]+)/$', view=views.detail, name='tag'),
 ]

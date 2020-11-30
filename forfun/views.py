@@ -18,6 +18,17 @@ def blogpage(request):
     return render(request, 'blog.html', locals())
 
 
+def category(request, slug=''):
+    slug = slug
+    articles = models.Article.objects.filter(category=models.Category.objects.get(slug=slug).id)
+    #articles = models.Category.objects.get(slug=slug).id
+    category = models.Category.objects.get(slug=slug)
+    categories = models.Category.objects.all()
+    tag_list = models.Tag.objects.all()
+
+    return render(request, 'category.html', locals())
+
+
 def detail(request, slug=''):
     slug = slug
     article = models.Article.objects.get(slug=slug)
