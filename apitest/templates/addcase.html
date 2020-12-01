@@ -35,6 +35,7 @@
         </div>
         <div class="card-body">
             <form id="apicaseform" class="needs-validation" novalidate>
+                {% csrf_token %}
 
                 <div class="form-group row">
                     <label for="apiname" class="col-sm-1 col-form-label">接口名称</label>
@@ -166,6 +167,7 @@
                     </div>
                 </div>
 
+
                 <div class="form-group row">
                     <label for="apicasedesc" class="col-sm-1 col-form-label">用例描述</label>
                     <div class="col-sm-8">
@@ -185,11 +187,11 @@
                                     <div class="col-sm-2">
                                         <input type="text" aria-label="key" class="form-control" name="caseparamkey"
                                                value="{{ key|default:'' }}" placeholder="参数名"
-                                               required>
+                                        >
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="text" aria-label="value" class="form-control" name="caseparamvalue"
-                                               value="{{ value }}" placeholder="参数值" required>
+                                               value="{{ value }}" placeholder="参数值">
                                     </div>
                                     <div class="col-sm-1 ml-0">
                                         <button type="button" class="btn btn-default" id="addnew">
@@ -241,14 +243,15 @@
                             <div class="col-sm-2">
                                 <input type="text" aria-label="key" class="form-control" name="caseparamkey"
                                        placeholder="参数名"
-                                       required>
+                                >
                             </div>
                             <div class="col-sm-4">
                                 <input type="text" aria-label="value" class="form-control" name="caseparamvalue"
-                                       placeholder="参数值" required>
+                                       placeholder="参数值">
                             </div>
                             <div class="col-sm-1 ml-0">
-                                <button type="button" class="btn btn-default" id="addnew">
+                                <button type="button" class="btn btn-default" id="addnew" data-toggle="tooltip"
+                                        data-placement="right" title="点击添加多对参数">
                                     <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus-circle"
                                          fill="currentColor"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -270,7 +273,13 @@
                     </div>
                 {% endif %}
 
-
+                <div class="form-group row">
+                    <label for="returncode" class="col-sm-1 col-form-label ">返回码</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="returncode" name="returncode" placeholder="请输入接口返回码"
+                               required>
+                    </div>
+                </div>
 
                 <div class="form-group row">
                     <div class="col-sm-1 ">
@@ -362,7 +371,8 @@
                     <div class="tab-pane fade " id="successtab" role="tabpanel" aria-labelledby="home-tab"><pre
                             id="successinfo"></pre>
                     </div>
-                    <div class="tab-pane fade" id="failuretab" role="tabpanel" aria-labelledby="profile-tab">黄河入海流 <br>欲穷千里目
+                    <div class="tab-pane fade" id="failuretab" role="tabpanel" aria-labelledby="profile-tab"><pre
+                            id="failureinfo"></pre>
                     </div>
                     <div class="tab-pane fade" id="headercontent" role="tabpanel" aria-labelledby="contact-tab"><pre
                             id="successheader"></pre>
@@ -417,10 +427,12 @@
                 let formData = {};
                 let singlerequestParam = $('#apicaseform').serializeArray();
                 // 获取已经带出来的参数，因为序列化没办法 把disabled元素取出来
+                let apiName = $('#apiname').val();
                 let url_path = $('#apiurl').val();
                 let method = $('#method option:selected').val();
                 singlerequestParam.push({name: "path", value: url_path});
                 singlerequestParam.push({name: "method", value: method});
+                singlerequestParam.push({name: "apiName", value: apiName});
                 console.log(singlerequestParam);
                 //循环序列化成数组的表单数据 然后添加到字典formData中
                 $.each(singlerequestParam, function () {
@@ -452,16 +464,21 @@
                                 if (resp.returncode === 200) {
                                     $('#failure-tab').attr("class", 'nav-link disabled');
                                     ress = resp.result;
-
                                     resss = resp.request_header;
                                     $('#successinfo').html(syntaxHighlight(ress));
                                     $('#successheader').html(syntaxHighlight(resss));
-
                                     $('#successtab').attr("class", 'tab-pane fade active show');
                                     $('#resulttabs').show();
 
                                 } else {
                                     $('#success-tab').attr("class", 'nav-link disabled');
+                                    let tabResult = $('#failuretab');
+
+                                    $('#failureinfo').html(syntaxHighlight(resp.result));
+                                    $('#successheader').html(syntaxHighlight(resp.request_header));
+                                    tabResult.attr("class", 'tab-pane fade active show');
+                                    $('#failure-tab').attr("class", 'nav-link active');
+
                                     $('#resulttabs').show()
                                 }
 
@@ -474,18 +491,19 @@
 
             });
 
+            //保存时候，验证完必填项之后，序列化form表单元素 提交保存
             function submitFormData() {
                 apicaseinfo = {name: "path", value: ""};
                 apicaseinfo['value'] = window.location.pathname;
+                console.log(222222222222222222222222);
                 console.log(apicaseinfo);
                 let params = $('#apicaseform').serializeArray();
                 params.push(apicaseinfo);
-                console.log(params);
-
+                console.log(1111111111111111111);
                 $.ajax({
                     async: false,
-                    type: 'POST',
-                    url: '/api/savasapicase/',
+                    type: 'post',
+                    url: '/api/caseadd/',
                     data: params,
                     success: function (resp) {
                         if (resp.returncode === 200) {
@@ -499,7 +517,7 @@
 
             }
 
-
+            //处理后端返回给前端的json串，添加样式
             function syntaxHighlight(json) {
                 if (typeof json != 'string') {
                     json = JSON.stringify(json, undefined, 2);

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
 from apitest.models import apiInfo, apiCase
 from performanceTest.models import BusiLine
@@ -14,6 +14,11 @@ def apimanage(request):
     apilist = apiInfo.objects.all()
 
     return render(request, 'apimanage.html', locals())
+
+
+def test(request):
+    # return HttpResponse(request,)
+    return JsonResponse({'returncode': 200})
 
 
 def editapi(request, api_id=0):
@@ -73,8 +78,9 @@ def saveapi(request):
         return JsonResponse({'returncode': 200, "message": "接口保存成功"})
 
 
-@csrf_exempt
-def saveapicase(request):
+
+
+def addapicase(request):
     if request.method == "POST":
         api_id = int(request.POST.get('path').split('/')[-2])
         print(api_id)
@@ -116,6 +122,7 @@ def addcase(request, api_id=0):
 @csrf_exempt
 def singlerequest(request):
     if request.method == 'POST':
+        api_name = request.POST.get("apiName")
         apicasename = request.POST.get("apicasename")
         apicasedesc = request.POST.get("apicasedesc")
         params_key = request.POST.getlist('caseparamkey')
@@ -124,19 +131,42 @@ def singlerequest(request):
         apicase_except = request.POST.get('checkpointkeyvalue')
         url_path = request.POST.get('path')
         request_method = request.POST.get('method')
+        returncode_expect = request.POST.get('returncode')
         params_dict = {}
         for k, v in zip(params_key, params_value):
             if k not in [None, ""] and v not in [None, ""]:
                 params_dict[k] = v
         print(params_dict)
+        # 根据method的不同拼凑请求方式
         if int(request_method) == 0:
-            print(222)
-            response = requests.get(url=url_path, headers={"a": "b"})
-            statecode = response.status_code
-            result = json.loads(response.text)
-            header = eval(str(response.request.headers))
-            print(type(json.dumps(eval(str(response.request.headers)))))
-            print(header)
-            print(type(response.text))
-            # print(apicasename, apicasedesc,url_path,request_method)
-            return JsonResponse({'returncode': statecode, "result": result, 'request_header': header})
+            # 获取请求的header
+            print(apicasename)
+            try:
+                headers = eval(apiInfo.objects.get(api_name=api_name).api_headers)
+            except Exception as e:
+                print(e)
+                headers = ''
+            response = requests.get(url=url_path, headers=headers, params=params_dict)
+            return_code_actual = response.status_code
+            # 校验返回码
+            if return_code_actual == int(returncode_expect):
+                result = json.loads(response.text)  # 响应的内容转换成字典样式
+                header = eval(str(response.request.headers))  # 获取的header先转换成字符串，再转为字典
+                import jsonpath
+                # 因为如果都转换成json格式 再renturn 前端处理会报错，所以转字典就可以了
+                result_json = json.loads(response.text)  # jsonpath处理数据必须是dict格式
+                print(type(result_json))
+                try:
+                    express_result = jsonpath.jsonpath(result_json, apicase_express)[0]
+                except Exception as e:
+                    express_result = ''
+                # json表达式获取的检查点的值和预期匹配
+                if apicase_except == express_result:
+                    return JsonResponse({'returncode': 200, "result": result, 'request_header': header})
+                else:
+                    return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
+            else:
+                return JsonResponse({'returncode': 202, "result": json.loads(response.text)})
+        else:
+            # post请求方式
+            return JsonResponse({'returncode': 200})

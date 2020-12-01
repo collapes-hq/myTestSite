@@ -63,10 +63,12 @@ import json
 #             in_count += 1
 # print(in_count)
 
-a = 'title=华为春季新品发布会&sign=323dwd&limit=100&status=0&address=国家会议中心&time=2018-03-28'
-b = []
-for i in a.split('&'):
-    if i.startswith('sign'):
-        i = 'sign=1234'
-    b.append(i)
-print('&'.join(b))
+# a = 'title=华为春季新品发布会&sign=323dwd&limit=100&status=0&address=国家会议中心&time=2018-03-28'
+# b = []
+# for i in a.split('&'):
+#     if i.startswith('sign'):
+#         i = 'sign=1234'
+#     b.append(i)
+# print('&'.join(b))
+
+
