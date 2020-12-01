@@ -5,7 +5,7 @@ from performanceTest.models import BusiLine
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
-
+import jsonpath
 
 # Create your views here.
 
@@ -27,21 +27,20 @@ def editapi(request, api_id=0):
         return render(request, 'editapi.html', locals())
     else:
         busi_line = BusiLine.objects.all()
-        try:
-            api_info = apiInfo.objects.get(api_id=api_id)
-            print(api_info)
-            headers = {}
+        headers = {}
+        api_info = apiInfo.objects.get(api_id=api_id)
+        print(api_info)
 
-            if api_info.api_headers:
-                try:
-                    headers = eval(api_info.api_headers)
-                    print(type(headers))
-                except Exception as e:
-                    print(e)
-                return render(request, 'editapi.html',
-                              {"api_info": api_info, "busi_line": busi_line, "headers": headers})
-        except:
-            return render(request, 'editapi.html', locals())
+        if api_info.api_headers:
+            try:
+                headers = eval(api_info.api_headers)
+                print(type(headers))
+            except Exception as e:
+                print(e)
+            return render(request, 'editapi.html',
+                          {"api_info": api_info, "busi_line": busi_line, "headers": headers})
+
+        return render(request, 'editapi.html',  {"api_info": api_info, "busi_line": busi_line, "headers": headers})
 
 
 def apicase(request):
@@ -74,10 +73,8 @@ def saveapi(request):
                                        api_headers=header_dict)
             s.save()
         else:
-            return JsonResponse({"returncode": 200, "message": "接口名称已存在"})
+            return JsonResponse({"returncode": 201, "message": "接口名称已存在"})
         return JsonResponse({'returncode': 200, "message": "接口保存成功"})
-
-
 
 
 def addapicase(request):
@@ -138,35 +135,34 @@ def singlerequest(request):
                 params_dict[k] = v
         print(params_dict)
         # 根据method的不同拼凑请求方式
+
+        # 获取请求的header
+        print(apicasename)
+        try:
+            headers = eval(apiInfo.objects.get(api_name=api_name).api_headers)
+        except Exception as e:
+            print(e)
+            headers = ''
         if int(request_method) == 0:
-            # 获取请求的header
-            print(apicasename)
-            try:
-                headers = eval(apiInfo.objects.get(api_name=api_name).api_headers)
-            except Exception as e:
-                print(e)
-                headers = ''
             response = requests.get(url=url_path, headers=headers, params=params_dict)
-            return_code_actual = response.status_code
-            # 校验返回码
-            if return_code_actual == int(returncode_expect):
-                result = json.loads(response.text)  # 响应的内容转换成字典样式
-                header = eval(str(response.request.headers))  # 获取的header先转换成字符串，再转为字典
-                import jsonpath
-                # 因为如果都转换成json格式 再renturn 前端处理会报错，所以转字典就可以了
-                result_json = json.loads(response.text)  # jsonpath处理数据必须是dict格式
-                print(type(result_json))
-                try:
-                    express_result = jsonpath.jsonpath(result_json, apicase_express)[0]
-                except Exception as e:
-                    express_result = ''
-                # json表达式获取的检查点的值和预期匹配
-                if apicase_except == express_result:
-                    return JsonResponse({'returncode': 200, "result": result, 'request_header': header})
-                else:
-                    return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
-            else:
-                return JsonResponse({'returncode': 202, "result": json.loads(response.text)})
         else:
-            # post请求方式
-            return JsonResponse({'returncode': 200})
+            response = requests.post(url=url_path, headers=headers, data=params_dict)
+        return_code_actual = response.status_code
+        # 校验返回码
+        result = json.loads(response.text)  # 响应的内容转换成字典样式
+        header = eval(str(response.request.headers))  # 获取的header先转换成字符串，再转为字典
+        if return_code_actual == int(returncode_expect):
+            # 因为如果都转换成json格式 再return 前端处理会报错，所以转字典就可以了
+            result_json = json.loads(response.text)  # jsonpath处理数据必须是dict格式
+            print(type(result_json))
+            try:
+                express_result = jsonpath.jsonpath(result_json, apicase_express)[0]
+            except Exception as e:
+                express_result = ''
+            # json表达式获取的检查点的值和预期匹配
+            if apicase_except == express_result:
+                return JsonResponse({'returncode': 200, "result": result, 'request_header': header})
+            else:
+                return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
+        else:
+            return JsonResponse({'returncode': 202, "result": result, 'request_header': header})

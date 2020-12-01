@@ -47,7 +47,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <input type="text" aria-label="value" class="form-control" name="headervalue"
-                                            value="{{ value }}" required>
+                                           value="{{ value }}" required>
                                 </div>
                                 <div class="col-sm-1 ml-0">
                                     <button type="button" class="btn btn-default" id="addnew">
@@ -68,12 +68,12 @@
                                 <label for="inputPassword3" class="col-sm-1 col-form-label"></label>
                                 <div class="col-sm-2">
                                     <input type="text" aria-label="key" class="form-control" value={{ key }}
-                                           name="headerkey"
+                                            name="headerkey"
                                     >
                                 </div>
                                 <div class="col-sm-4">
                                     <input type="text" aria-label="value" class="form-control" value={{ value }}
-                                           name="headervalue">
+                                            name="headervalue">
                                 </div>
                                 <div class="col-sm-1 ml-0">
                                     <button type="button" class="btn btn-default" id="delnew">
@@ -166,7 +166,7 @@
                                 <option value="0" selected>GET</option>
                                 <option value="1">POST</option>
                             {% else %}
-                                <option value="0" >GET</option>
+                                <option value="0">GET</option>
                                 <option value="1" selected>POST</option>
                             {% endif %}
 
@@ -230,6 +230,20 @@
                 </div>
             </form>
         </div>
+
+        <div class="modal fade" id="apiModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p class="text-center mb-0" id="info">
+
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block script %}
@@ -282,7 +296,12 @@
                     data: t,
                     success: function (resp) {
                         if (resp.returncode === 200) {
-                            //setTimeout(window.location.href = '/api/manage', 5000)
+                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>接口保存成功，请到接口列表页查看");
+                            $('#apiModal').modal('show');
+                            setTimeout(window.location.href = '/api/manage', 5000)
+                        } else {
+                            $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>该接口名称已存在，请修改");
+                            $('#apiModal').modal('show');
                         }
 
                     }
