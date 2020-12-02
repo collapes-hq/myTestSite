@@ -144,7 +144,7 @@ def singlerequest(request):
             print(e)
             headers = ''
         if int(request_method) == 0:
-            response = requests.get(url=url_path, headers=headers, params=params_dict)
+            response = requests.get(url=url_path, headers=headers, params=params_dict,)
         else:
             response = requests.post(url=url_path, headers=headers, data=params_dict)
         return_code_actual = response.status_code
@@ -160,7 +160,7 @@ def singlerequest(request):
             except Exception as e:
                 express_result = ''
             # json表达式获取的检查点的值和预期匹配
-            if apicase_except == express_result:
+            if str(apicase_except) == str(express_result):
                 return JsonResponse({'returncode': 200, "result": result, 'request_header': header})
             else:
                 return JsonResponse({'returncode': 202, "result": result, 'request_header': header})

@@ -495,11 +495,11 @@
             function submitFormData() {
                 apicaseinfo = {name: "path", value: ""};
                 apicaseinfo['value'] = window.location.pathname;
-                console.log(222222222222222222222222);
-                console.log(apicaseinfo);
+                //console.log(222222222222222222222222);
+                //console.log(apicaseinfo);
                 let params = $('#apicaseform').serializeArray();
                 params.push(apicaseinfo);
-                console.log(1111111111111111111);
+                //console.log(1111111111111111111);
                 $.ajax({
                     async: false,
                     type: 'post',

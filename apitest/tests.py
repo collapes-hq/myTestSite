@@ -72,3 +72,35 @@ import json
 # print('&'.join(b))
 
 
+# import os
+#
+# f = os.popen('ifconfig')
+# shuchu = f.read()
+# result = shuchu.split("\n")
+# new_result = [item.strip() for item in result]
+# print(new_result)
+
+
+# import subprocess
+#
+# result = subprocess.run('ifconfig', stdout=subprocess.PIPE)
+# print(type(result))
+# print(result.returncode)
+# a = result.stdout.decode('utf-8')
+# print(type(a))
+# # result = subprocess.check_output('ifconfig')
+# # # print(type(result.stdout)) # <class 'bytes'>
+# # # print(result.stdout.decode('utf-8'))
+# # print(result)
+#
+# # result = subprocess.getoutput('ifconfig')
+# # print(result)
+# # result1 = subprocess.getstatusoutput('ifconfig')
+# # print(result1[1])
+#
+#
+# # result = subprocess.Popen('ifconfig', stdout=subprocess.PIPE, universal_newlines=True)
+# # result1 = subprocess.Popen('ifconfig', stdout=subprocess.PIPE, encoding='utf-8')
+# # result2 = subprocess.run('ifconfig', stdout=subprocess.PIPE)
+# # print(result1)
+# # print(type(result2.stdout.decode('utf-8')))
