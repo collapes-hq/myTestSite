@@ -166,3 +166,7 @@ def singlerequest(request):
                 return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
         else:
             return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
+
+
+def timingTask(request):
+    return render(request,'timingTask.html',locals())

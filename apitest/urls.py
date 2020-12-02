@@ -14,6 +14,7 @@ urlpatterns = [
     url('singlerequest/', view=views.singlerequest),
     url(r'caseadd/$', view=views.addapicase),
     url(r'addcase/$', view=views.addcase),
+    url(r'timingTask/$', view=views.timingTask),
     url(r'editapi/(?P<api_id>[\d]{0,4})/$', view=views.editapi, name='jumpApi'),
     url(r'addcase/(?P<api_id>[\d]{0,4})/$', view=views.addcase, name='addcase'),
 ]
