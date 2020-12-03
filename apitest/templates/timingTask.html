@@ -1,21 +1,23 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}接口巡查{% endblock %}
 {% block css %}
-
+    <link href="{% static 'apitest/css/cronGen.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
 
             <div class="card  shadow h-100 py-2 "
                  data-servername="aaa">
                 <div class="card-header" id="header">
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-9">
                             <div class="text-md font-weight-bold text-primary text-uppercase mb-1">
-                                名称:{{ server.server_name }}</div>
+                                巡查任务:mockjson接口监控
+                            </div>
                         </div>
-                        <div class="col-2" id="editserverinfo">
+                        <div class="col-1" id="editserverinfo">
                             <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil"
                                  fill="currentColor"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -37,31 +39,49 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-1">
-                            <li>case1</li>
-                            <li>case1</li>
-                            <li>case1</li>
-                            <li>case1</li>
-                            <li>case1</li>
-                            <li>case1</li>
+                    <div class="row ml-1">
 
-                        </div>
-                        <div class="col-auto">
 
-                            <button disabled
-                                    class="btn {% if server.server_status == 0 %} btn-success {% elif server.server_status == 1 %} btn-warning {% elif server.server_status == 2 %} btn-danger {% endif %}"
-                                    id="server_status">{{ server.get_server_status_display }}</button>
+                        <a class="text-primary font-weight-bold"  data-toggle="collapse"
+                                data-target="#collapseExample" aria-expanded="false"
+                                aria-controls="collapseExample">
+                            巡查任务用例 <span class="badge badge-light">4</span>
+                        </a>
+                    </div>
+                    <div class="row mt-2 ml-1">
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body">
+                                <li><a href="">testcase1aaaaaaaaaaaaa</a></li>
+                                <li><a href="">testcase1</a></li>
+                                <li><a href="">testcase1</a></li>
+                                <li><a href="">testcase1</a></li>
+                                <li><a href="">testcase1</a></li>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="card-footer">
-                   <p><h1>设置时间  增加case</h1>
+                <div class="card-footer bg-white">
+                    <form action="">
+                        <div class="form-group row">
+                            <label for="crontab" class="col-3 col-form-label">定时运行：</label>
+                            <div class="col-9">
+                                <input type="text" class="form-inline form-control" id="crontab" value=" * * * * *"
+                                       disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <button class="btn btn-danger btn-block">查看执行详情</button>
+                            </div>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
 
             <div class="card  shadow h-100 py-2 "
                  data-servername="aaa">
@@ -115,14 +135,30 @@
                 </div>
 
                 <div class="card-footer">
-                    <h1>AAAAA</h1>
-                    <h1>AAAAA</h1>
-                    <h1>AAAAA</h1>
-                    <h1>AAAAA</h1>
-                    <h1>AAAAA</h1>
-                    <h1>AAAAA</h1>
+                    {#                    <h1>AAAAA</h1>#}
+                    {#                    <h1>AAAAA</h1>#}
+                    {#                    <h1>AAAAA</h1>#}
+                    {#                    <h1>AAAAA</h1>#}
+
                 </div>
             </div>
         </div>
+        <div class="col-xl-12 col-md-6 mb-4">
+            <i class="fa fa-camera-retro fa-5x"></i>
+        </div>
     </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'apitest/js/cronGen.min.js' %}"></script>
+{% endblock %}
+{% block extrascript %}
+    <script>
+        $(function () {
+            $("#cron").cronGen({
+                direction: 'right'
+            });
+        });
+    </script>
+
 {% endblock %}

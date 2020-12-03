@@ -7,6 +7,7 @@ import json
 import requests
 import jsonpath
 
+
 # Create your views here.
 
 
@@ -40,7 +41,7 @@ def editapi(request, api_id=0):
             return render(request, 'editapi.html',
                           {"api_info": api_info, "busi_line": busi_line, "headers": headers})
 
-        return render(request, 'editapi.html',  {"api_info": api_info, "busi_line": busi_line, "headers": headers})
+        return render(request, 'editapi.html', {"api_info": api_info, "busi_line": busi_line, "headers": headers})
 
 
 def apicase(request):
@@ -144,7 +145,7 @@ def singlerequest(request):
             print(e)
             headers = ''
         if int(request_method) == 0:
-            response = requests.get(url=url_path, headers=headers, params=params_dict,)
+            response = requests.get(url=url_path, headers=headers, params=params_dict, )
         else:
             response = requests.post(url=url_path, headers=headers, data=params_dict)
         return_code_actual = response.status_code
@@ -169,4 +170,37 @@ def singlerequest(request):
 
 
 def timingTask(request):
-    return render(request,'timingTask.html',locals())
+    return render(request, 'timingTask.html', locals())
+
+
+def monitorTask(request):
+    return render(request, 'monitorTask.html', locals())
+
+
+def getdata(request):
+    #  data = json.dumps({"data": [{"name1", "name2", "name3", "name4", "name5", "name6", "name7"}]})
+
+    '''
+    {data:"busi"},
+                    {data:"name"},{
+                    data:"casecount"
+                    },{
+                    data:"tasktype"
+                    },{
+                    data:"savetime"
+                    },{
+                    data:"result"
+                    },{
+                    data:"action"
+                    }
+    :param request:
+    :return:
+    '''
+    data1 = [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+              "result": "name5", "action": "name6"}]
+
+    data2 = {"dataaaaa": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"}]}
+    print(type(data2))
+    #return JsonResponse(data2)
+    return HttpResponse(json.dumps(data2))
