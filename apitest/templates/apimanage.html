@@ -84,12 +84,13 @@
     <script>
         $(function () {
             $('#tasktable').DataTable({
+                dom:  '<"top">rt<"bottom"fp><"clear">',
 
                 paging: true,       <!-- 允许分页 -->
-                lengthChange: true, <!-- 允许改变每页显示的行数 -->
+                lengthChange: false, <!-- 允许改变每页显示的行数 -->
                 searching: true,    <!-- 允许内容搜索 -->
-                ordering: true,     <!-- 允许排序 -->
-                info: true,         <!-- 显示信息 -->
+                ordering: false,     <!-- 允许排序 -->
+                info: false,         <!-- 显示信息 -->
                 autoWidth: false,    <!-- 固定宽度 -->
                 language: {
                     lengthMenu: '<select class="form-control input-xsmall">' + '<option value="5">5</option>' + '<option value="10">10</option>' + '<option value="20">20</option>' + '<option value="30">30</option>' + '<option value="40">40</option>' + '<option value="50">50</option>' + '</select>条记录',//左上角的分页大小显示。

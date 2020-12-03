@@ -199,8 +199,28 @@ def getdata(request):
     data1 = [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
               "result": "name5", "action": "name6"}]
 
-    data2 = {"dataaaaa": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"}]}
+    data2 = {"dataaaaa": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "namsssssssssssssssssssssssssssse4",
+                      "result": "aaaaaaaaa", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "bbbbbbbbb"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
+                      "result": "name5", "action": "name6"},]}
     print(type(data2))
     #return JsonResponse(data2)
     return HttpResponse(json.dumps(data2))

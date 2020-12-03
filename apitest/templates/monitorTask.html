@@ -21,19 +21,21 @@
                         </select>
                     </div>
                     <div class="col-3">
-                        <input type="text" class="form-control" placeholder="请输入要查询的任务名">
+                        <input type="text" class="form-control" id="inputkey" placeholder="请输入要查询的任务名">
                     </div>
                     <div class="col-2 ">
 
-                        <button class="btn btn-primary">搜索</button>
+                        <button class="btn btn-primary mr-1" id="searchbutton"><i class="fa fa-search"
+                                                                                  aria-hidden="true"></i> 搜索
+                        </button>
 
-                        <button class="btn btn-success">新建任务</button>
+                        <button class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> 新建任务</button>
                     </div>
                 </div>
 
                 <div class="mt-2">
 
-                    <table class="table table-bordered" id="tasktable">
+                    <table class="table table-bordered table-hover " id="tasktable">
                         <thead>
                         <tr>
                             <th>业务线</th>
@@ -58,29 +60,36 @@
     <script src="{% static 'vendor/bootstrap/js/jquery.dataTables.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/dataTables.bootstrap4.min.js' %}"></script>
     <script>
+        var table;
         $(function () {
-            table = $('#tasktable').DataTable({
+            table = $('#tasktable').dataTable({
+                "dom":  '<"top">rt<"bottom"fp><"clear">',
                 "ajax": {
                     "url": '/api/getdata/',
-                    dataSrc:'dataaaaa'
+                    dataSrc: 'dataaaaa'
 
                 },
-                columns:[
-                    {data:"busi"},
-                    {data:"name"},{
-                    data:"casecount"
-                    },{
-                    data:"tasktype"
-                    },{
-                    data:"savetime"
-                    },{
-                    data:"result"
-                    },{
-                    data:"action"
+                columns: [
+                    {data: "busi"},
+                    {data: "name"}, {
+                        data: "casecount"
+                    }, {
+                        data: "tasktype"
+                    }, {
+                        data: "savetime"
+                    }, {
+                        data: "result"
+                    }, {
+                        data: "action"
                     }
                 ],
-                "processing": true,
-                "language": {
+                searching: true,
+                processing: false,
+                ordering: false,
+                lengthChange: false,
+                info: true,
+                // paging: false,
+                language: {
                     "sProcessing": "处理中...",
                     "sLengthMenu": "显示 _MENU_ 项结果",
                     "sZeroRecords": "没有匹配结果",
@@ -104,14 +113,18 @@
                         "sSortDescending": ": 以降序排列此列"
                     }
                 },
-                "dom":
-                    "<'row'<'span9'l<'#mytoolbox'>><'span3'f>r>" +
-                    "t" +
-                    "<'row'<'span6'i><'span6'p>>",
 
-            });
+            }).api();
 
         });
+
+
+        $('#searchbutton').click(function () {
+            alert("hello");
+            let value = $('#inputkey').val();
+            table.search(value).draw();
+        })
+
 
     </script>
 {% endblock %}
