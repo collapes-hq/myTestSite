@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    监控任务
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block content %}
+
+
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <select name="" id="" class="form-control">
+                            <option value="0" selected>全部业务线</option>
+                            <option value="1">大数据部</option>
+                            <option value="3">技术中台部</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" placeholder="请输入要查询的任务名">
+                    </div>
+                    <div class="col-2 ">
+
+                        <button class="btn btn-primary">搜索</button>
+
+                        <button class="btn btn-success">新建任务</button>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+
+                    <table class="table table-bordered" id="tasktable">
+                        <thead>
+                        <tr>
+                            <th>业务线</th>
+                            <th>任务名称</th>
+                            <th>接口用例数</th>
+                            <th>执行类型</th>
+                            <th>更新时间</th>
+                            <th>执行结果</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'vendor/bootstrap/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
+        $(function () {
+            table = $('#tasktable').DataTable({
+                "ajax": {
+                    "url": '/api/getdata/',
+                    dataSrc:'dataaaaa'
+
+                },
+                columns:[
+                    {data:"busi"},
+                    {data:"name"},{
+                    data:"casecount"
+                    },{
+                    data:"tasktype"
+                    },{
+                    data:"savetime"
+                    },{
+                    data:"result"
+                    },{
+                    data:"action"
+                    }
+                ],
+                "processing": true,
+                "language": {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": 以升序排列此列",
+                        "sSortDescending": ": 以降序排列此列"
+                    }
+                },
+                "dom":
+                    "<'row'<'span9'l<'#mytoolbox'>><'span3'f>r>" +
+                    "t" +
+                    "<'row'<'span6'i><'span6'p>>",
+
+            });
+
+        });
+
+    </script>
+{% endblock %}
