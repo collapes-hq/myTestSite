@@ -177,6 +177,29 @@ def monitorTask(request):
     return render(request, 'monitorTask.html', locals())
 
 
+def getcaselist(request):
+    data = {'caseList':[{
+
+            "importUnitId": "111111111",
+            "importUnitName": "case001",
+            "flag": 'false',
+
+        }, {
+            "importUnitId": "222222222",
+            "importUnitName": "case2",
+            "flag": 'false',
+        }, {
+            "importUnitId": "33333333333",
+            "importUnitName": "case3",
+            "flag": 'false',
+        }, {
+            "importUnitId": "444444444444",
+            "importUnitName": "case4",
+            "flag": 'true',
+        }]}
+    return JsonResponse(data)
+
+
 def getdata(request):
     #  data = json.dumps({"data": [{"name1", "name2", "name3", "name4", "name5", "name6", "name7"}]})
 
@@ -199,28 +222,18 @@ def getdata(request):
     data1 = [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
               "result": "name5", "action": "name6"}]
 
-    data2 = {"dataaaaa": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "namsssssssssssssssssssssssssssse4",
-                      "result": "aaaaaaaaa", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "bbbbbbbbb"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
-                      "result": "name5", "action": "name6"},]}
+    data2 = {"dataaaaa": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                           "savetime": "namsssssssssssssssssssssssssssse4",
+                           "result": "7 | 1", "action": "name6"},
+                          {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                           "savetime": "name4",
+                           "result": "name5", "action": "bbbbbbbbb"},
+                          {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                           "savetime": "name4",
+                           "result": "name5", "action": "name6"},
+                          {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                           "savetime": "name4",
+                           "result": "5 | 1", "action": "name6"}, ]}
     print(type(data2))
-    #return JsonResponse(data2)
+    # return JsonResponse(data2)
     return HttpResponse(json.dumps(data2))

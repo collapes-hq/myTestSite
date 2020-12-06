@@ -23,12 +23,11 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="inputkey" placeholder="请输入要查询的任务名">
                     </div>
-                    <div class="col-2 ">
+                    <div class="col-3 ">
 
                         <button class="btn btn-primary mr-1" id="searchbutton"><i class="fa fa-search"
                                                                                   aria-hidden="true"></i> 搜索
                         </button>
-
                         <button class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> 新建任务</button>
                     </div>
                 </div>
@@ -63,7 +62,7 @@
         var table;
         $(function () {
             table = $('#tasktable').dataTable({
-                "dom":  '<"top">rt<"bottom"fp><"clear">',
+                "dom":  '<"top">rt<"bottom"f>p<"clear">',
                 "ajax": {
                     "url": '/api/getdata/',
                     dataSrc: 'dataaaaa'
