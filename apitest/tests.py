@@ -104,3 +104,7 @@ import json
 # # result2 = subprocess.run('ifconfig', stdout=subprocess.PIPE)
 # # print(result1)
 # # print(type(result2.stdout.decode('utf-8')))
+# a = '[1,2,3,4,5]'
+# n=a.split(',')
+# print(n)
+# print(list(n)[3])

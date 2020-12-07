@@ -5,6 +5,16 @@
 {% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+    <style type="text/css">
+        .table th {
+        vertical-align:middle;
+        }
+
+        th {
+            font-weight: normal;
+
+        }
+    </style>
 {% endblock %}
 {% block content %}
 
@@ -46,7 +56,34 @@
                             <th>操作</th>
                         </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                        {% for task in tasks %}
+                            <tr>
+                                <th>{{ task.monitorTask_busi.busi_name }}</th>
+                                <th>{{ task.monitorTask_name }}</th>
+                                <th>{{ task.monitorTask_caseList|length }}</th>
+                                <th>{{ task.get_monitorTask_type_display }}</th>
+                                <th>{{ task.monitorTask_c_time|date:"Y/m/d H:m:s" }}</th>
+                                <th>9 | 1</th>
+                                <th>
+                                    <div class="btn-group btn-group-justified " role="group" aria-label="...">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'apitest:addcase' api.api_id %}"
+                                               class="btn btn-primary">创建用例</a>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'apitest:jumpApi' api.api_id %}"
+                                               class="btn btn-warning">编辑接口</a>
+
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-danger " type="button" id="del"> 删除接口</button>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
                     </table>
 
 
@@ -62,26 +99,25 @@
         var table;
         $(function () {
             table = $('#tasktable').dataTable({
-                "dom":  '<"top">rt<"bottom"f>p<"clear">',
-                "ajax": {
-                    "url": '/api/getdata/',
-                    dataSrc: 'dataaaaa'
-
-                },
-                columns: [
-                    {data: "busi"},
-                    {data: "name"}, {
-                        data: "casecount"
-                    }, {
-                        data: "tasktype"
-                    }, {
-                        data: "savetime"
-                    }, {
-                        data: "result"
-                    }, {
-                        data: "action"
-                    }
-                ],
+                "dom": '<"top">rt<"bottom"f>p<"clear">',
+                //"ajax": {
+                //"url": '/api/getdata/',
+                // dataSrc: 'data'
+                //},
+                //columns: [
+                //    {data: "busi"},
+                //    {data: "name"}, {
+                //        data: "casecount"
+                //    }, {
+                //        data: "tasktype"
+                //    }, {
+                //        data: "savetime"
+                //   }, {
+                //        data: "result"
+                //  }, {
+                //       data: "action"
+                //   }
+                //],
                 searching: true,
                 processing: false,
                 ordering: false,
@@ -119,7 +155,6 @@
 
 
         $('#searchbutton').click(function () {
-            alert("hello");
             let value = $('#inputkey').val();
             table.search(value).draw();
         })

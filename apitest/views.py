@@ -15,6 +15,7 @@ from django.core import serializers
 def apimanage(request):
     apilist = apiInfo.objects.all()
 
+
     return render(request, 'apimanage.html', locals())
 
 
@@ -177,6 +178,7 @@ def timingTask(request):
 
 
 def monitorTask(request):
+    tasks = monitorTaskInfo.objects.all()
     return render(request, 'monitorTask.html', locals())
 
 
@@ -213,38 +215,49 @@ def getcaselist(request):
 
 def getdata(request):
     #  data = json.dumps({"data": [{"name1", "name2", "name3", "name4", "name5", "name6", "name7"}]})
-
-    '''
-    {data:"busi"},
-                    {data:"name"},{
-                    data:"casecount"
-                    },{
-                    data:"tasktype"
-                    },{
-                    data:"savetime"
-                    },{
-                    data:"result"
-                    },{
-                    data:"action"
-                    }
-    :param request:
-    :return:
-    '''
     data1 = [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3", "savetime": "name4",
               "result": "name5", "action": "name6"}]
 
-    data2 = {"dataaaaa": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
-                           "savetime": "namsssssssssssssssssssssssssssse4",
-                           "result": "7 | 1", "action": "name6"},
-                          {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
-                           "savetime": "name4",
-                           "result": "name5", "action": "bbbbbbbbb"},
-                          {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
-                           "savetime": "name4",
-                           "result": "name5", "action": "name6"},
-                          {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
-                           "savetime": "name4",
-                           "result": "5 | 1", "action": "name6"}, ]}
+    data2 = {"data": [{"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                       "savetime": "namsssssssssssssssssssssssssssse4",
+                       "result": "7 | 1", "action": "name6"},
+                      {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                       "savetime": "name4",
+                       "result": "name5", "action": "bbbbbbbbb"},
+                      {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                       "savetime": "name4",
+                       "result": "name5", "action": "name6"},
+                      {"busi": "name7", "name": "name1", "casecount": "name2", "tasktype": "name3",
+                       "savetime": "name4",
+                       "result": "5 | 1", "action": "name6"}, ]}
+    # 如果是ajax过来请求数据 需要对queryset的数据做序列化然后针对外键还有做特殊处理很麻烦
+    task = {}
+    tasks_list = []
+    if len(monitorTaskInfo.objects.all()) > 0:
+        queryset_tasks = json.loads(serializers.serialize("json", monitorTaskInfo.objects.all()))
+        busi_dict = BusiLine.objects.values('busi_id', 'busi_name')
+        print(busi_dict)
+        print(queryset_tasks)
+        busi_actual={}
+        task_type={
+            0:"自动",
+            1:"手动"
+        }
+        for busi in busi_dict:
+            busi_actual[busi['busi_id']]=busi['busi_name']
+        print(busi_actual)
+        for task in queryset_tasks:
+            tasks_list.append({
+                "busi":busi_actual[task['fields']['monitorTask_busi']],
+                "name":task['fields']['monitorTask_name'],
+                "casecount":len(task['fields']['monitorTask_caseList']),
+                "type":task_type[task['fields']['monitorTask_type']],
+                "savetime":task['fields']['monitorTask_c_time'],
+
+            })
+        print(queryset_tasks)
+        print(tasks_list)
+
     print(type(data2))
     # return JsonResponse(data2)
     return HttpResponse(json.dumps(data2))
