@@ -481,25 +481,22 @@
 
                                     $('#resulttabs').show()
                                 }
-
                             }
-
                         });
                     }
                 });
-
-
             });
 
             //保存时候，验证完必填项之后，序列化form表单元素 提交保存
             function submitFormData() {
-                apicaseinfo = {name: "path", value: ""};
+                let apicaseinfo = {name: "path", value: ""};
                 apicaseinfo['value'] = window.location.pathname;
-                //console.log(222222222222222222222222);
+                let busi_id = {name:"busi_id",value:0};
+                busi_id['value']= $('#busi option:selected').val();
                 //console.log(apicaseinfo);
                 let params = $('#apicaseform').serializeArray();
                 params.push(apicaseinfo);
-                //console.log(1111111111111111111);
+                params.push(busi_id);
                 $.ajax({
                     async: false,
                     type: 'post',
@@ -507,10 +504,18 @@
                     data: params,
                     success: function (resp) {
                         if (resp.returncode === 200) {
+                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>用例保存成功，请到用例列表页查看");
+                            $('#caseModal').modal('show');
+                            setTimeout("$('#caseModal').modal('hide')", 3000)
+                        } else if(resp.returncode === 201){
+                            let reason = resp.message;
+                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>用例保存失败，原因："+reason);
                             $('#caseModal').modal('show');
                             setTimeout("$('#caseModal').modal('hide')", 3000)
                         } else {
-
+                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>用例保存失败，用例名称已存在");
+                            $('#caseModal').modal('show');
+                            setTimeout("$('#caseModal').modal('hide')", 3000)
                         }
                     }
                 })

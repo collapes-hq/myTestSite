@@ -203,17 +203,18 @@
                     <div class="modal-body">
                         <form>
                             <div class="form-group">
-                                <label for="recipient-name" class="col-form-label">任务名称:</label>
-                                <input type="text" class="form-control" id="recipient-name">
+                                <label for="task_name" class="col-form-label">任务名称:</label>
+                                <input type="text" class="form-control" id="task_name">
                             </div>
                             <div class="form-row" id="typeTask">
                                 <div class="form-group col-6">
                                     <label for="busi" class="col-form-label">业务线</label>
                                     <select class="custom-select" id="busi" name="busi" required>
                                         <option selected disabled value="">Choose...</option>
-                                        <option value="0">大数据部</option>
-                                        <option value="1">技术中台部</option>
-                                        <option value="2">前台业务部</option>
+                                        <option value="1">大数据部</option>
+                                        <option value="2">技术中台部</option>
+                                        <option value="3">技术前台部</option>
+                                        <option value="4">人力部</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-6">
@@ -236,7 +237,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-dark btn-block">巡查用例添加</button>
+                                <button class="btn btn-dark btn-block" disabled>添加巡查用例</button>
                             </div>
                             <div class="form-row">
                                 <div id="transferContainer" class="row ml-2" style="width: 750px;"></div>
@@ -245,13 +246,28 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Send message</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" id="saveTask">保存</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p class="text-center mb-0" id="info">
+                                <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
 {% endblock %}
 {% block script %}
@@ -261,45 +277,7 @@
     <script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="{% static 'apitest/js/Transfer.js' %}"></script>
     <script>
-        let data = [{
-
-            "importUnitId": "950258484706803712",
-            "importUnitName": "分数对比2016",
-            "flag": false,
-
-        }, {
-            "importUnitId": "949202813861232640",
-            "importUnitName": "对比1",
-            "flag": false,
-        }, {
-            "importUnitId": "948380218236600320",
-            "importUnitName": "测试2",
-            "flag": false,
-        }, {
-            "importUnitId": "946590730653007872",
-            "importUnitName": "对比4",
-            "flag": false,
-        }, {
-            "importUnitId": "946590730653007889",
-            "importUnitName": "对比954",
-            "flag": true,
-        }, {
-            "importUnitId": "946590730653008647",
-            "importUnitName": "对比88",
-            "flag": true,
-        }, {
-            "importUnitId": "946590000653008647",
-            "importUnitName": "对比99",
-            "flag": true,
-        }, {
-            "importUnitId": "94612730653008647",
-            "importUnitName": "对比828",
-            "flag": true,
-        }, {
-            "importUnitId": "946542340653008647",
-            "importUnitName": "对比858",
-            "flag": true,
-        }];
+        let data = [];
         $(function () {
 
             // cron插件声明
@@ -334,6 +312,7 @@
                 $.ajax({
                     url: '/api/busicaselist/',
                     async: false,
+                    data:{'busi_id':busi_id},
                     type: 'GET',
                     success: function (resp) {
                         busi_case_data = resp.caseList;
@@ -370,6 +349,39 @@
                 var getdata = $('#transferContainer').transfer('getData', 'selectData');
                 alert(getdata);
                 console.log(getdata)
+            });
+
+            //保存任务
+            $('#saveTask').click(function () {
+                //获取表单参数
+                let task_name = $('#task_name').val();
+                let busi_id = $("#busi option:selected").val();
+                let typeOfTask = $('#typeOfTask option:selected').val();
+                let cron_time = $('#crontab_value').val();
+                let case_list =  JSON.stringify($('#transferContainer').transfer('getData', 'selectData'));
+                console.log(case_list);
+                let data = {
+                    'task_name':task_name,
+                    'busi_id':busi_id,
+                    'typeOfTask':typeOfTask,
+                    'cron_time':cron_time,
+                    'case_list':case_list
+                };
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url:'/api/patrolTaskcase/',
+                    data:data,
+                    success:function (resp) {
+                        if (resp.returncode === 200){
+                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>任务保存成功，请到任务列表页查看");
+                            $('#createTaskModal').modal('hide');
+                            $('#taskModal').modal('show');
+                            setTimeout("$('#taskModal').modal('hide')", 3000)
+                        }
+
+                    }
+                })
             })
 
 

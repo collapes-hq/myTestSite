@@ -1,11 +1,12 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-from apitest.models import apiInfo, apiCase
+from apitest.models import apiInfo, apiCase, monitorTask as monitorTaskInfo
 from performanceTest.models import BusiLine
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 import jsonpath
+from django.core import serializers
 
 
 # Create your views here.
@@ -82,6 +83,7 @@ def addapicase(request):
     if request.method == "POST":
         api_id = int(request.POST.get('path').split('/')[-2])
         print(api_id)
+        busi_id = request.POST.get('busi_id')
         # 还要根据api之前录入的时候选的参数格式
         apicase_name = request.POST.get('apicasename')
         apicase_desc = request.POST.get('apicasedesc')
@@ -99,12 +101,13 @@ def addapicase(request):
             try:
                 init = apiCase.objects.create(apicase_name=apicase_name, apicase_desc=apicase_desc,
                                               apicase_express=apicase_express, apicase_except=apicase_except,
-                                              apicase_params=params_dict, case_api_id_id=api_id)
+                                              apicase_params=params_dict, case_api_id=api_id, case_busi_id=busi_id)
                 init.save()
             except Exception as e:
                 print(e)
-                return JsonResponse({'returncode': 201, 'message': '保存失败'})
+                return JsonResponse({'returncode': 201, 'message': '保存失败' + str(e)})
             return JsonResponse({'returncode': 200, 'message': '保存成功'})
+        return JsonResponse({'returncode': 202, 'message': '保存失败,用例名称已存在'})
 
 
 def addcase(request, api_id=0):
@@ -178,26 +181,34 @@ def monitorTask(request):
 
 
 def getcaselist(request):
-    data = {'caseList':[{
-
-            "importUnitId": "111111111",
-            "importUnitName": "case001",
-            "flag": 'false',
-
-        }, {
-            "importUnitId": "222222222",
-            "importUnitName": "case2",
-            "flag": 'false',
-        }, {
-            "importUnitId": "33333333333",
-            "importUnitName": "case3",
-            "flag": 'false',
-        }, {
-            "importUnitId": "444444444444",
-            "importUnitName": "case4",
-            "flag": 'true',
-        }]}
-    return JsonResponse(data)
+    # 根据业务线查询case
+    if request.method == 'GET':
+        busi_id = request.GET.get('busi_id')
+        print(busi_id)
+        case_list_queryset = apiCase.objects.filter(case_busi_id=busi_id)
+        if len(case_list_queryset) > 0:
+            caseList = []
+            case_format = {}
+            case_list = json.loads(serializers.serialize("json", case_list_queryset))
+            print(case_list)
+            for case in case_list:
+                # case_format["importUnitId"] = case['pk']
+                # case_format["importUnitName"] = case['fields']['apicase_name']
+                # case_format["flag"] = 'false'
+                # print(case_format)
+                # data = {'caseList': [{
+                #     "importUnitId": "111111111",
+                #     "importUnitName": "case001",
+                #     "flag": 'false',
+                # }]}
+                caseList.append({
+                    "importUnitId": str(case['pk']),
+                    "importUnitName": case['fields']['apicase_name'],
+                    "flag": 'false',
+                })
+            return JsonResponse({'caseList': caseList})
+        else:
+            return JsonResponse({'caseList': []})
 
 
 def getdata(request):
@@ -237,3 +248,28 @@ def getdata(request):
     print(type(data2))
     # return JsonResponse(data2)
     return HttpResponse(json.dumps(data2))
+
+
+@csrf_exempt
+def addMonitorCase(request):
+    if request.method == 'POST':
+        task_name = request.POST.get('task_name')
+        busi_id = request.POST.get('busi_id')
+        type_Task = request.POST.get('typeOfTask')
+        cron_time = request.POST.get('cron_time')
+        case_list = request.POST.get('case_list')
+        print(task_name)
+        print(busi_id)
+        print(type_Task)
+        print(cron_time)
+        print(case_list)
+        if not monitorTaskInfo.objects.filter(monitorTask_name=task_name):
+            try:
+                init = monitorTaskInfo.objects.create(monitorTask_name=task_name, monitorTask_busi_id=busi_id,
+                                                      monitorTask_type=type_Task, monitorTask_caseList=case_list)
+                init.save()
+                return JsonResponse({'returncode': 200, 'message': '保存成功'})
+            except Exception as e:
+                print(e)
+                return JsonResponse({'returncode': 201, 'message': '保存失败'})
+        return JsonResponse({'returncode': 202, 'message': '任务已存在，请修改后提交'})

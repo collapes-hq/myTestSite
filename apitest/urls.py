@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'timingTask/$', view=views.timingTask),
     url(r'monitorTask/$', view=views.monitorTask),
     url(r'getdata/$', view=views.getdata),
+    url(r'patrolTaskcase/$', view=views.addMonitorCase),
     url(r'busicaselist/$', view=views.getcaselist),
     url(r'editapi/(?P<api_id>[\d]{0,4})/$', view=views.editapi, name='jumpApi'),
     url(r'addcase/(?P<api_id>[\d]{0,4})/$', view=views.addcase, name='addcase'),
