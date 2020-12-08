@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load extra_tags %}
 {% block title %}接口巡查{% endblock %}
 {% block css %}
     <link href="{% static 'apitest/css/jquery-gentleSelect.css' %}" rel="stylesheet" type="text/css">
@@ -48,6 +49,7 @@
     {#        </div>#}
     {#    </div>#}
     <div class="row">
+    {% for taskinfo in taskinfos %}
         <div class="col-xl-4 col-md-6 mb-4">
             <div class="card  shadow h-100 py-2 "
                  data-servername="aaa">
@@ -55,15 +57,15 @@
                     <div class="row">
                         <div class="col-9">
                             <div class="text-md font-weight-bold text-primary text-uppercase mb-1">
-                                巡查任务:mockjson接口监控
+                                巡查任务:{{ taskinfo.monitorTask_name }}
                             </div>
                         </div>
-                        <div class="col-1 text-center" id="editserverinfo">
-                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil"
-                                 fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
+                        <div class="col-1 text-center" id="editTaskinfo">
+                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil-square"
+                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd"
-                                      d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                             </svg>
                         </div>
                         <div class="col-2 text-center" id="delserver">
@@ -83,17 +85,16 @@
                         <a class="text-primary font-weight-bold" data-toggle="collapse"
                            data-target="#collapseExample" aria-expanded="false"
                            aria-controls="collapseExample">
-                            巡查任务用例 <span class="badge badge-light">4</span>
+                            巡查任务用例 <span class="badge badge-light">{{ taskinfo.monitorTask_caseList|strToDict|length }}</span>
                         </a>
                     </div>
                     <div class="row mt-2 ml-1">
                         <div class="collapse" id="collapseExample">
                             <div class="card card-body">
-                                <li><a href="">testcase1aaaaaaaaaaaaa</a></li>
-                                <li><a href="">testcase1</a></li>
-                                <li><a href="">testcase1</a></li>
-                                <li><a href="">testcase1</a></li>
-                                <li><a href="">testcase1</a></li>
+                                {% for case in taskinfo.monitorTask_caseList|strToDict %}
+                                    <li><a href="">{{ case }}</a></li>
+
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -118,56 +119,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card  shadow h-100 py-2 "
-                 data-servername="aaa">
-                <div class="card-header" id="header">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="text-md font-weight-bold text-primary text-uppercase mb-1">
-                                名称:{{ server.server_name }}</div>
-                        </div>
-                        <div class="col-2" id="editserverinfo">
-                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil"
-                                 fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                            </svg>
-                        </div>
-                        <div class="col-2" id="delserver">
-                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-person-x"
-                                 fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10zm1.146-7.85a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-1">
-                            <div class="text-md font-weight-bold text-primary text-uppercase mb-1"
-                                 id="server_ip">
-                                IP地址:{{ server.server_ip }}
-                                <br>
-                                IP地址:{{ server.server_ip }}
-                                <br>
-                                IP地址:{{ server.server_ip }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <button disabled
-                                    class="btn {% if server.server_status == 0 %} btn-success {% elif server.server_status == 1 %} btn-warning {% elif server.server_status == 2 %} btn-danger {% endif %}"
-                                    id="server_status">{{ server.get_server_status_display }}</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                </div>
-            </div>
-        </div>
+    {% endfor %}
 
         <div class="col-xl-4 col-md-6 mb-4 flex-column text-center align-self-center">
             <a class="btn" id="createTask">

@@ -12,8 +12,18 @@ from django import template
 
 register = template.Library()
 
+
 @register.filter()
 def strToList(value):
     # eval(value.replace("true", "\'true\'").repalce("false", "\'false\'"))
     result = str(value.replace("true", "\'true\'")).replace("false", "\'false\'")
     return eval(result)
+
+
+@register.filter()
+def strToDict(value):
+    cases = eval(value.replace("true", "\'true\'").replace("false", "\'false\'"))
+    case_list = []
+    for case in cases:
+        case_list.append(case["importUnitName"])
+    return case_list

@@ -133,8 +133,6 @@ def singlecase(request, api_id=0, case_id=0):
     caseinfo = apiCase.objects.get(apicase_id=case_id)
     api_info = apiInfo.objects.get(api_id=api_id)
     params = eval(apiCase.objects.get(apicase_id=case_id).apicase_params)
-    print('aaaaaaaaaaaaaaaaaaaaaaa' + str(case_id))
-    print(params)
     return render(request, 'addcase.html', locals())
 
 
@@ -191,6 +189,7 @@ def singlerequest(request):
 
 
 def timingTask(request):
+    taskinfos = monitorTaskInfo.objects.all()
     return render(request, 'timingTask.html', locals())
 
 
