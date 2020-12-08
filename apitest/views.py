@@ -15,7 +15,6 @@ from django.core import serializers
 def apimanage(request):
     apilist = apiInfo.objects.all()
 
-
     return render(request, 'apimanage.html', locals())
 
 
@@ -85,18 +84,21 @@ def addapicase(request):
         api_id = int(request.POST.get('path').split('/')[-2])
         print(api_id)
         busi_id = request.POST.get('busi_id')
-        # 还要根据api之前录入的时候选的参数格式
+        # 还要根据api之前录入的时候选的参数格式拿参数
         apicase_name = request.POST.get('apicasename')
         apicase_desc = request.POST.get('apicasedesc')
         apicase_express = request.POST.get('checkpointkey')
         apicase_except = request.POST.get('checkpointkeyvalue')
         params_key = request.POST.getlist('caseparamkey')
         params_value = request.POST.getlist('caseparamvalue')
+
         params_dict = {}
         for k, v in zip(params_key, params_value):
             if k not in [None, ""] and v not in [None, ""]:
                 params_dict[k] = v
-        print(params_dict)
+        # 补上之前的只保存key-value对的参数，加上了额外的形式
+        if len(params_dict.items()) == 0:
+            params_dict = request.POST.get("apicasecontent")
         # 如果名字有重复的就认为已存在
         if not apiCase.objects.filter(apicase_name=apicase_name):
             try:
@@ -118,6 +120,21 @@ def addcase(request, api_id=0):
     # print(type(api.first().api_headers))
     busi_list = BusiLine.objects.all()
     api_info = apiInfo.objects.get(api_id=api_id)
+    return render(request, 'addcase.html', locals())
+
+
+def singlecase(request, api_id=0, case_id=0):
+    api_id = api_id
+    case_id = case_id
+    # api = apiInfo.objects.filter(api_id=api_id)
+    # print(type(api.first()))
+    # print(type(api.first().api_headers))
+    busi_list = BusiLine.objects.all()
+    caseinfo = apiCase.objects.get(apicase_id=case_id)
+    api_info = apiInfo.objects.get(api_id=api_id)
+    params = eval(apiCase.objects.get(apicase_id=case_id).apicase_params)
+    print('aaaaaaaaaaaaaaaaaaaaaaa' + str(case_id))
+    print(params)
     return render(request, 'addcase.html', locals())
 
 
@@ -238,21 +255,21 @@ def getdata(request):
         busi_dict = BusiLine.objects.values('busi_id', 'busi_name')
         print(busi_dict)
         print(queryset_tasks)
-        busi_actual={}
-        task_type={
-            0:"自动",
-            1:"手动"
+        busi_actual = {}
+        task_type = {
+            0: "自动",
+            1: "手动"
         }
         for busi in busi_dict:
-            busi_actual[busi['busi_id']]=busi['busi_name']
+            busi_actual[busi['busi_id']] = busi['busi_name']
         print(busi_actual)
         for task in queryset_tasks:
             tasks_list.append({
-                "busi":busi_actual[task['fields']['monitorTask_busi']],
-                "name":task['fields']['monitorTask_name'],
-                "casecount":len(task['fields']['monitorTask_caseList']),
-                "type":task_type[task['fields']['monitorTask_type']],
-                "savetime":task['fields']['monitorTask_c_time'],
+                "busi": busi_actual[task['fields']['monitorTask_busi']],
+                "name": task['fields']['monitorTask_name'],
+                "casecount": len(task['fields']['monitorTask_caseList']),
+                "type": task_type[task['fields']['monitorTask_type']],
+                "savetime": task['fields']['monitorTask_c_time'],
 
             })
         print(queryset_tasks)
@@ -268,21 +285,17 @@ def addMonitorCase(request):
     if request.method == 'POST':
         task_name = request.POST.get('task_name')
         busi_id = request.POST.get('busi_id')
-        type_Task = request.POST.get('typeOfTask')
+        type_task = request.POST.get('typeOfTask')
         cron_time = request.POST.get('cron_time')
         case_list = request.POST.get('case_list')
-        print(task_name)
-        print(busi_id)
-        print(type_Task)
-        print(cron_time)
-        print(case_list)
         if not monitorTaskInfo.objects.filter(monitorTask_name=task_name):
             try:
                 init = monitorTaskInfo.objects.create(monitorTask_name=task_name, monitorTask_busi_id=busi_id,
-                                                      monitorTask_type=type_Task, monitorTask_caseList=case_list)
+                                                      monitorTask_type=type_task, monitorTask_caseList=case_list,
+                                                      monitorTask_cron=cron_time)
                 init.save()
                 return JsonResponse({'returncode': 200, 'message': '保存成功'})
             except Exception as e:
                 print(e)
-                return JsonResponse({'returncode': 201, 'message': '保存失败'})
+                return JsonResponse({'returncode': 201, 'message': '保存失败,{0}'.format(e)})
         return JsonResponse({'returncode': 202, 'message': '任务已存在，请修改后提交'})

@@ -141,20 +141,6 @@
                         </div>
                     </div>
                 </div>
-
-
-                {#                <div class="form-group row">#}
-                {#                    <div class="col-sm-1">Checkbox</div>#}
-                {#                    <div class="col-sm-8">#}
-                {#                        <div class="form-check">#}
-                {#                            <input class="form-check-input" type="checkbox" id="gridCheck1">#}
-                {#                            <label class="form-check-label" for="gridCheck1">#}
-                {#                                Example checkbox#}
-                {#                            </label>#}
-                {#                        </div>#}
-                {#                    </div>#}
-                {#                </div>#}
-
                 <hr>
                 <h2><span class="badge badge-secondary">用例信息</span></h2>
                 <hr>
@@ -162,24 +148,21 @@
                     <label for="apicasename" class="col-sm-1 col-form-label">用例名称</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" id="apicasename" name="apicasename"
-                               placeholder="请输入用例名称"
+                               placeholder="请输入用例名称" value="{{ caseinfo.apicase_name|default:''}}"
                                required>
                     </div>
                 </div>
-
-
                 <div class="form-group row">
                     <label for="apicasedesc" class="col-sm-1 col-form-label">用例描述</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" id="apicasedesc" name="apicasedesc"
-                               placeholder="请输入用例描述"
+                               placeholder="请输入用例描述" value="{{ caseinfo.apicase_desc|default:''}}"
                                required>
                     </div>
                 </div>
                 {% if api_info.api_contenttype == 1 %}
-                    {% if headers %}
-
-                        {% for key,value in headers.items %}
+                    {% if params %}
+                        {% for key,value in params.items %}
 
                             {% if forloop.first %}
                                 <div class="form-group row" id="headerparam">
@@ -191,7 +174,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="text" aria-label="value" class="form-control" name="caseparamvalue"
-                                               value="{{ value }}" placeholder="参数值">
+                                               value="{{ value|default:'' }}" placeholder="参数值">
                                     </div>
                                     <div class="col-sm-1 ml-0">
                                         <button type="button" class="btn btn-default" id="addnew">
@@ -268,7 +251,7 @@
                     <div class="form-group row">
                         <label for="apicasecontent" class="col-sm-1 col-form-label">参数</label>
                         <div class="col-sm-8">
-                            <textarea class="form-control" id="apicontent" name="apicasecontent" required></textarea>
+                            <textarea class="form-control" id="apicontent" name="apicasecontent" required>{{ caseinfo.apicase_params|default:'' }}</textarea>
                         </div>
                     </div>
                 {% endif %}
@@ -277,21 +260,20 @@
                     <label for="returncode" class="col-sm-1 col-form-label ">返回码</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="returncode" name="returncode" placeholder="请输入接口返回码"
+                               value=""
                                required>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-sm-1 ">
-                        <label for="apicheckpoint">检查点
-
-                        </label>
+                        <label for="apicheckpoint">检查点</label>
                     </div>
                     <div class="col-sm-2">
                         <div class="form-group">
                             <label for="checkexpress" data-toggle="tooltip" data-placement="top" data-html="true"
                                    title="例如$.result.list[0].data.title">表达式 <a>
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle"
+                                <svg width="1.1em" height="1.1em" viewBox="0 0 16 16" class="bi bi-info-circle"
                                      fill="currentColor"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
@@ -302,7 +284,7 @@
                             </a></label>
                             <input type="text" aria-label="key" class="form-control" name="checkpointkey"
                                    id="checkexpress"
-                                   value="{{ key|default:'' }}"
+                                   value="{{ caseinfo.apicase_express|default:'' }}"
                                    required>
                         </div>
                     </div>
@@ -311,7 +293,7 @@
                             <label for="checkresult">期望值</label>
                             <input type="text" aria-label="value" class="form-control" name="checkpointkeyvalue"
                                    id="checkresult"
-                                   value="{{ value }}" required>
+                                   value="{{ caseinfo.apicase_except|default:'' }}" required>
                         </div>
                     </div>
                 </div>
@@ -509,7 +491,7 @@
                             setTimeout("$('#caseModal').modal('hide')", 3000)
                         } else if(resp.returncode === 201){
                             let reason = resp.message;
-                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>用例保存失败，原因："+reason);
+                            $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>用例保存失败，原因："+reason);
                             $('#caseModal').modal('show');
                             setTimeout("$('#caseModal').modal('hide')", 3000)
                         } else {

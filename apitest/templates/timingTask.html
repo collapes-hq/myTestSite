@@ -49,7 +49,6 @@
     {#    </div>#}
     <div class="row">
         <div class="col-xl-4 col-md-6 mb-4">
-
             <div class="card  shadow h-100 py-2 "
                  data-servername="aaa">
                 <div class="card-header" id="header">
@@ -98,9 +97,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
                 <div class="card-footer bg-white">
                     <form action="">
                         <div class="form-group row">
@@ -120,8 +117,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6 mb-4">
 
+        <div class="col-xl-4 col-md-6 mb-4">
             <div class="card  shadow h-100 py-2 "
                  data-servername="aaa">
                 <div class="card-header" id="header">
@@ -139,16 +136,13 @@
                             </svg>
                         </div>
                         <div class="col-2" id="delserver">
-
                             <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-person-x"
                                  fill="currentColor"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                       d="M8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10zm1.146-7.85a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
                             </svg>
-
                         </div>
-
                     </div>
                 </div>
                 <div class="card-body">
@@ -162,32 +156,22 @@
                                 <br>
                                 IP地址:{{ server.server_ip }}
                             </div>
-
                         </div>
                         <div class="col-auto">
-
                             <button disabled
                                     class="btn {% if server.server_status == 0 %} btn-success {% elif server.server_status == 1 %} btn-warning {% elif server.server_status == 2 %} btn-danger {% endif %}"
                                     id="server_status">{{ server.get_server_status_display }}</button>
                         </div>
                     </div>
                 </div>
-
                 <div class="card-footer">
-                    {#                    <h1>AAAAA</h1>#}
-                    {#                    <h1>AAAAA</h1>#}
-                    {#                    <h1>AAAAA</h1>#}
-                    {#                    <h1>AAAAA</h1>#}
-
                 </div>
             </div>
         </div>
+
         <div class="col-xl-4 col-md-6 mb-4 flex-column text-center align-self-center">
             <a class="btn" id="createTask">
                 <i class="fa fa-plus-square-o fa-5x"></i></a>
-        </div>
-
-        <div>
         </div>
 
         <div class="modal fade " id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -255,19 +239,17 @@
     </div>
 
     <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <p class="text-center mb-0" id="info">
-                                <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
-
-                            </p>
-                        </div>
-
-                    </div>
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-center mb-0" id="info">
+                        <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                    </p>
                 </div>
             </div>
+        </div>
+    </div>
 
 {% endblock %}
 {% block script %}
@@ -306,20 +288,16 @@
             //这个是任务类型选择自动带出cron插件的监控
             $("#busi").change(function () {
                 var busi_id = $("#busi option:selected").val();
-                alert(typeof (busi_id));
-                console.log(busi_id);
                 let busi_case_data;
                 $.ajax({
                     url: '/api/busicaselist/',
                     async: false,
-                    data:{'busi_id':busi_id},
+                    data: {'busi_id': busi_id},
                     type: 'GET',
                     success: function (resp) {
                         busi_case_data = resp.caseList;
-                        console.log(busi_case_data);
-                        console.log(typeof busi_case_data);
                         $.each(busi_case_data, function (i, elment) {
-
+                            //数据存储的时候true或者false要带引号，返回到前端就要去掉
                             if (elment.flag === "false") {
                                 elment.flag = false
                             } else {
@@ -358,33 +336,38 @@
                 let busi_id = $("#busi option:selected").val();
                 let typeOfTask = $('#typeOfTask option:selected').val();
                 let cron_time = $('#crontab_value').val();
-                let case_list =  JSON.stringify($('#transferContainer').transfer('getData', 'selectData'));
+                let case_list = JSON.stringify($('#transferContainer').transfer('getData', 'selectData'));
                 console.log(case_list);
                 let data = {
-                    'task_name':task_name,
-                    'busi_id':busi_id,
-                    'typeOfTask':typeOfTask,
-                    'cron_time':cron_time,
-                    'case_list':case_list
+                    'task_name': task_name,
+                    'busi_id': busi_id,
+                    'typeOfTask': typeOfTask,
+                    'cron_time': cron_time,
+                    'case_list': case_list
                 };
                 $.ajax({
                     async: false,
                     type: 'POST',
-                    url:'/api/patrolTaskcase/',
-                    data:data,
-                    success:function (resp) {
-                        if (resp.returncode === 200){
+                    url: '/api/patrolTaskcase/',
+                    data: data,
+                    success: function (resp) {
+                        if (resp.returncode === 200) {
                             $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>任务保存成功，请到任务列表页查看");
                             $('#createTaskModal').modal('hide');
                             $('#taskModal').modal('show');
                             setTimeout("$('#taskModal').modal('hide')", 3000)
+                        } else if (resp.returncode === 201) {
+                            $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>任务保存失败" + resp.message);
+                            $('#taskModal').modal('show');
+                            setTimeout("$('#taskModal').modal('hide')", 5000)
+                        } else if (resp.returncode === 202) {
+                            $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>任务保存失败" + resp.message);
+                            $('#taskModal').modal('show');
+                            setTimeout("$('#taskModal').modal('hide')", 5000)
                         }
-
                     }
                 })
             })
-
-
         });
     </script>
 {% endblock %}

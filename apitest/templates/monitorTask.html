@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load extra_tags %}
 {% block title %}
     监控任务
 {% endblock %}
@@ -13,6 +14,10 @@
         th {
             font-weight: normal;
 
+        }
+        .btn{
+            line-height:1.5;
+            font-size: 1rem;
         }
     </style>
 {% endblock %}
@@ -61,23 +66,23 @@
                             <tr>
                                 <th>{{ task.monitorTask_busi.busi_name }}</th>
                                 <th>{{ task.monitorTask_name }}</th>
-                                <th>{{ task.monitorTask_caseList|length }}</th>
+                                <th>{{ task.monitorTask_caseList|strToList|length }}</th>
                                 <th>{{ task.get_monitorTask_type_display }}</th>
                                 <th>{{ task.monitorTask_c_time|date:"Y/m/d H:m:s" }}</th>
                                 <th>9 | 1</th>
                                 <th>
                                     <div class="btn-group btn-group-justified " role="group" aria-label="...">
-                                        <div class="btn-group" role="group">
+                                        <div class="btn-group mr-1" role="group">
                                             <a href="{% url 'apitest:addcase' api.api_id %}"
-                                               class="btn btn-primary">创建用例</a>
+                                               class="">手动执行</a>
                                         </div>
-                                        <div class="btn-group" role="group">
+                                        <div class="btn-group mr-1" role="group">
                                             <a href="{% url 'apitest:jumpApi' api.api_id %}"
-                                               class="btn btn-warning">编辑接口</a>
+                                               class="">编辑接口</a>
 
                                         </div>
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-danger " type="button" id="del"> 删除接口</button>
+                                            <a  href="{% url 'apitest:addcase'  api.api_id %}" class="" type="button" id="del"> 删除接口</a>
                                         </div>
                                     </div>
                                 </th>

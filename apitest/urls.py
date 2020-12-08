@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'busicaselist/$', view=views.getcaselist),
     url(r'editapi/(?P<api_id>[\d]{0,4})/$', view=views.editapi, name='jumpApi'),
     url(r'addcase/(?P<api_id>[\d]{0,4})/$', view=views.addcase, name='addcase'),
+    url(r'sendsinglecase/(?P<api_id>[\d]{0,4})/(?P<case_id>[\d]{0,4})/$', view=views.singlecase, name='singlecase'),
 ]

@@ -55,9 +55,11 @@ class monitorTask(models.Model):
     monitorTask_id = models.AutoField(primary_key=True, verbose_name='任务编号')
     monitorTask_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='任务名称')
     monitorTask_type = models.IntegerField(choices=type, null=True, blank=True, verbose_name='任务类型')
-    monitorTask_caseList = models.CharField(max_length=256,null=True, blank=True,verbose_name='用例列表')
-    monitorTask_busi= models.ForeignKey('performanceTest.BusiLine', null=True, verbose_name='业务线', on_delete=models.SET_NULL)
+    monitorTask_caseList = models.CharField(max_length=256, null=True, blank=True, verbose_name='用例列表')
+    monitorTask_busi = models.ForeignKey('performanceTest.BusiLine', null=True, verbose_name='业务线',
+                                         on_delete=models.SET_NULL)
     monitorTask_c_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    monitorTask_cron = models.CharField(max_length=64, null=True, blank=True, verbose_name='执行cron')
 
     class Mate:
         verbose_name = '巡查任务用例表',

@@ -31,17 +31,17 @@
 
                             <td class="align-middle">{{ apicase.apicase_id }}</td>
                             <td class="align-middle"><a href="">{{ apicase.apicase_name }}</a></td>
-                            <td class="align-middle">{{ apicase.case_api_id.api_busi.busi_name }}</td>
-                            <td class="align-middle">{{ apicase.case_api_id.get_api_type_display|upper}}</td>
+                            <td class="align-middle">{{ apicase.case_api.api_busi.busi_name }}</td>
+                            <td class="align-middle">{{ apicase.case_api.get_api_type_display|upper}}</td>
                             <td class="text-truncate align-middle"
-                                style="max-width: 350px;">{{ apicase.case_api_id.api_url }}</td>
+                                style="max-width: 350px;">{{ apicase.case_api.api_url }}</td>
 
                             <td class="align-middle">{{ apicase.apicase_c_time|date:"Y/m/d H:m:s" }}</td>
 
                             <td>
                                 <div class="btn-group btn-group-justified " role="group" aria-label="...">
                                     <div class="btn-group" role="group">
-                                        <a href="{% url 'apitest:addcase' api.api_id %}"
+                                        <a href="{% url 'apitest:singlecase' apicase.case_api_id apicase.apicase_id %}"
                                            class="btn btn-primary ">单次请求</a>
                                     </div>
                                     <div class="btn-group" role="group">
@@ -73,12 +73,12 @@
     <script>
         $(function () {
             $('#tasktable').DataTable({
-
+                dom:'<"top">rt<"bottom"fp><"clear">',
                 paging: true,       <!-- 允许分页 -->
-                lengthChange: true, <!-- 允许改变每页显示的行数 -->
+                lengthChange: false, <!-- 允许改变每页显示的行数 -->
                 searching: true,    <!-- 允许内容搜索 -->
-                ordering: true,     <!-- 允许排序 -->
-                info: true,         <!-- 显示信息 -->
+                ordering: false,     <!-- 允许排序 -->
+                info: false,         <!-- 显示信息 -->
                 autoWidth: false,    <!-- 固定宽度 -->
                 language: {
                     lengthMenu: '<select class="form-control input-xsmall">' + '<option value="5">5条/页</option>' + '<option value="10">10条/页</option>' + '<option value="20">20条/页</option>' + '<option value="30">30条/页</option>' + '<option value="40">40条/页</option>' + '<option value="50">50条/页</option>' + '</select>',//左上角的分页大小显示。
