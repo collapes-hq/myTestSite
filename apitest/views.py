@@ -7,6 +7,7 @@ import json
 import requests
 import jsonpath
 from django.core import serializers
+import grequests
 
 
 # Create your views here.
@@ -312,13 +313,27 @@ def manualExecTask(request):
                                                                                                               "\'true\'").replace(
             "false", "\'false\'"))
         print(case_list)
+        # 这些拼装数据的操作都需要后期 缓存到redis或者使用kafka
         cases_id = []
+        req_list = []
         for case in case_list:
-            cases_id.append(int(case["importUnitId"]))
-        print(cases_id)
-        # 根据case_id_list拼装request_list 要遍历case_id_list然后拼装
-        for case_id in cases_id:
-            api_id = apiCase.objects.get(case_id).apicase_id
+            case_id = int(case["importUnitId"])
+            # 根据case_id_list拼装request_list 要遍历case_id_list然后拼装
+            api_case = apiCase.objects.get(apicase_id=case_id)
+            api_id = api_case.case_api_id
+            api_info = apiInfo.objects.get(api_id=api_id)
+            api_type = api_info.api_type  # 获取此case是get还是post
+            api_url = api_info.api_url  # 获取此case的请求url
+            headers = eval(api_info.api_headers)  # 获取请求头
+            data = eval(api_case.apicase_params)
+            print(case_id, api_id, api_type, api_url, type(headers), type(data))
+            if api_type == 0:
+                req_list.append(grequests.get(api_url, headers=headers, params=data))
+            else:
+                req_list.append(grequests.post(api_url, headers=headers, data=data))
+            print(req_list)
+        resq =  grequests.map(req_list)
+        print(resq)
+        for item in resq:
+            print(item.status_code,item.request.headers,item.text)
         return JsonResponse({'returncode': 200})
-
-

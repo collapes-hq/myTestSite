@@ -108,3 +108,21 @@ import json
 # n=a.split(',')
 # print(n)
 # print(list(n)[3])
+import grequests
+
+a = 'http://httpbin.org/get?a=1&b=2'
+
+
+def print_url(r, *args, **kwargs):
+    print(1111)
+    print(r.url)
+
+
+url = "http://www.baidu.com"
+req_list = []
+req_list.append(grequests.get('http://121.36.69.137/getmockjson', headers={"a": "b"}))
+# response = grequests.get('http://121.36.69.137/getmockjson')
+
+resp = grequests.map(req_list)
+print(resp[0].request.headers)
+print(resp[0].text)
