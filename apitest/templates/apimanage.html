@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load extra_tags %}
 {% block title %}接口管理{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
@@ -47,7 +48,7 @@
                             <td class="align-middle">{{ api.get_api_type_display }}</td>
                             <td class="text-truncate align-middle"
                                 style="max-width: 250px;">{{ api.api_url }}</td>
-                            <td class="align-middle">6</td>
+                            <td class="align-middle">{{ api.api_id|getCaseCount }}</td>
                             <td class="align-middle">{{ api.api_c_time|date:"Y/m/d H:m:s" }}</td>
 
                             <td>

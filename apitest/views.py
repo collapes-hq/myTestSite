@@ -169,8 +169,13 @@ def singlerequest(request):
             response = requests.post(url=url_path, headers=headers, data=params_dict)
         return_code_actual = response.status_code
         # 校验返回码
-        result = json.loads(response.text)  # 响应的内容转换成字典样式
-        header = eval(str(response.request.headers))  # 获取的header先转换成字符串，再转为字典
+        result = ''
+        header = ''
+        if response.text in ['', None]:
+            result = ''
+        else:
+            result = json.loads(response.text)  # 响应的内容转换成字典样式
+            header = eval(str(response.request.headers))  # 获取的header先转换成字符串，再转为字典
         if return_code_actual == int(returncode_expect):
             # 因为如果都转换成json格式 再return 前端处理会报错，所以转字典就可以了
             result_json = json.loads(response.text)  # jsonpath处理数据必须是dict格式
@@ -185,12 +190,19 @@ def singlerequest(request):
             else:
                 return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
         else:
-            return JsonResponse({'returncode': 202, "result": result, 'request_header': header})
+            return JsonResponse(
+                {'returncode': 202, "result": {'returncode': return_code_actual}, 'request_header': header})
 
 
 def timingTask(request):
     taskinfos = monitorTaskInfo.objects.all()
     return render(request, 'timingTask.html', locals())
+
+
+def singleTaskDetail(request, task_id=0):
+    # taskinfos = monitorTaskInfo.objects.all()
+    task_id = task_id
+    return render(request, 'singleTaskInfo.html', locals())
 
 
 def monitorTask(request):
@@ -210,15 +222,6 @@ def getcaselist(request):
             case_list = json.loads(serializers.serialize("json", case_list_queryset))
             print(case_list)
             for case in case_list:
-                # case_format["importUnitId"] = case['pk']
-                # case_format["importUnitName"] = case['fields']['apicase_name']
-                # case_format["flag"] = 'false'
-                # print(case_format)
-                # data = {'caseList': [{
-                #     "importUnitId": "111111111",
-                #     "importUnitName": "case001",
-                #     "flag": 'false',
-                # }]}
                 caseList.append({
                     "importUnitId": str(case['pk']),
                     "importUnitName": case['fields']['apicase_name'],
@@ -298,3 +301,24 @@ def addMonitorCase(request):
                 print(e)
                 return JsonResponse({'returncode': 201, 'message': '保存失败,{0}'.format(e)})
         return JsonResponse({'returncode': 202, 'message': '任务已存在，请修改后提交'})
+
+
+def manualExecTask(request):
+    if request.method == 'GET':
+        task_name = request.GET.get('task_name')
+        print(task_name)
+        # 根据task_name获取task下的case_list
+        case_list = eval(monitorTaskInfo.objects.get(monitorTask_name=task_name).monitorTask_caseList.replace("true",
+                                                                                                              "\'true\'").replace(
+            "false", "\'false\'"))
+        print(case_list)
+        cases_id = []
+        for case in case_list:
+            cases_id.append(int(case["importUnitId"]))
+        print(cases_id)
+        # 根据case_id_list拼装request_list 要遍历case_id_list然后拼装
+        for case_id in cases_id:
+            api_id = apiCase.objects.get(case_id).apicase_id
+        return JsonResponse({'returncode': 200})
+
+

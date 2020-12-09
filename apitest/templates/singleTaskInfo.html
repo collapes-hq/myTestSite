@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}
+    任务执行详情
+{% endblock %}
+{% block css %}
+    <style type="text/css">
+        .table td, .table th {
+            padding: .4rem;
+            vertical-align: middle;
+            border-top: 1px solid #e3e6f0
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+
+                        <div class="align-self-center"><span class="font-weight-bold text-dark">巡查任务名称：</span>泰斯特</div>
+                    </div>
+                    <div class="card-body table-hover">
+                        <div class="row">
+                            <div class="col-4">
+                                <p><span class="text-primary">业务线：</span>大数据部</p>
+                            </div>
+                            <div class="col-4">
+                                <p><span class="text-primary">执行类型：</span>自动</p>
+                            </div>
+                            <div class="col-4">
+                                <p><span class="text-primary">通知类型：</span>钉钉通知</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <p><span class="text-primary">创建人：</span>郝强</p>
+                            </div>
+                            <div class="col-4">
+                                <p><span class="text-primary">用例个数：</span>6</p>
+                            </div>
+                            <div class="col-4">
+                                <p><span class="text-primary">定时执行：</span>* * * * *</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <div class="row">
+                            <div class="col-1 align-self-center"><span class=" font-weight-bolder">运行结果</span></div>
+                            <div class="col-2 offset-9">
+                                <button class="btn btn-danger">批量处理报警</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>运行id</th>
+                                <th>开始时间</th>
+                                <th>结束时间</th>
+                                <th>运行状态</th>
+                                <th>执行结果</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>9873517</td>
+                                <td>a</td>
+                                <td>a</td>
+                                <td>已执行</td>
+                                <td>
+                                    <div class="btn-group ">
+                                        <button class="btn btn-primary mt-0 mb-0">9</button>
+                                        <button class="btn btn-danger mt-0 mb-0">1</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

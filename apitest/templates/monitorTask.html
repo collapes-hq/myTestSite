@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
     <style type="text/css">
         .table th {
-        vertical-align:middle;
+            vertical-align: middle;
         }
 
         th {
             font-weight: normal;
 
         }
-        .btn{
-            line-height:1.5;
+
+        .btn {
+            line-height: 1.5;
             font-size: 1rem;
         }
     </style>
@@ -73,23 +74,33 @@
                                 <th>
                                     <div class="btn-group btn-group-justified " role="group" aria-label="...">
                                         <div class="btn-group mr-1" role="group">
-                                            <a href="{% url 'apitest:addcase' api.api_id %}"
-                                               class="">手动执行</a>
+                                            <a href=# class="" id="execTask">手动执行</a>
                                         </div>
                                         <div class="btn-group mr-1" role="group">
-                                            <a href="{% url 'apitest:jumpApi' api.api_id %}"
+                                            <a href="{% url 'apitest:taskDetail' task.monitorTask_id %}"
                                                class="">执行详情</a>
-
                                         </div>
-
                                     </div>
                                 </th>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
 
 
+        <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p class="text-center mb-0" id="info">
+                            <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                                手动执行任务已提交，请进入任务详情页面查看
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,24 +114,6 @@
         $(function () {
             table = $('#tasktable').dataTable({
                 "dom": '<"top">rt<"bottom"f>p<"clear">',
-                //"ajax": {
-                //"url": '/api/getdata/',
-                // dataSrc: 'data'
-                //},
-                //columns: [
-                //    {data: "busi"},
-                //    {data: "name"}, {
-                //        data: "casecount"
-                //    }, {
-                //        data: "tasktype"
-                //    }, {
-                //        data: "savetime"
-                //   }, {
-                //        data: "result"
-                //  }, {
-                //       data: "action"
-                //   }
-                //],
                 searching: true,
                 processing: false,
                 ordering: false,
@@ -154,14 +147,34 @@
 
             }).api();
 
+
         });
 
 
         $('#searchbutton').click(function () {
             let value = $('#inputkey').val();
             table.search(value).draw();
-        })
+        });
+        //jquery委托事件--按钮操作获取当前行的相关数据
+        $('tbody').on('click', '#execTask', function () {
+            let form_value = [];
+            $(this).parent().parent().parent().parent().children('th').each(function () {
+                form_value.push($(this).text());
+            });
+            var task_name = form_value[1];
+            console.log(task_name.replace(/(\s*$)/g, ""));
+            $.ajax({
+                async: true,
+                type:'GET',
+                url: '/api/manualExecTask/',
+                data: {'task_name': task_name},
+                success: function () {
+                    $('#taskModal').modal('show');
+                    setTimeout("$('#taskModal').modal('hide')", 5000)
+                }
+            })
 
+        })
 
     </script>
 {% endblock %}

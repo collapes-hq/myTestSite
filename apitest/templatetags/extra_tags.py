@@ -9,6 +9,7 @@
 """
 
 from django import template
+from apitest import models
 
 register = template.Library()
 
@@ -27,3 +28,9 @@ def strToDict(value):
     for case in cases:
         case_list.append(case["importUnitName"])
     return case_list
+
+
+@register.filter()
+def getCaseCount(value):
+    count = len(models.apiCase.objects.filter(case_api_id=value))
+    return count

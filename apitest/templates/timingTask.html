@@ -48,7 +48,20 @@
     {#        <button class="btn btn-primary">aaaaaaaaaaa</button>#}
     {#        </div>#}
     {#    </div>#}
-    <div class="row">
+    <div class="card">
+    <div class="card-header bg-white">
+        <div class="row">
+            <div class="col-2 align-self-center">
+                <span class="font-weight-bolder"><i class="fas fa-tasks"></i> 巡查任务卡片池</span>
+            </div>
+            <div class="col-2 offset-8">
+                <button class="btn btn-primary"  id="createTask"><i class="fa fa-plus-square"></i> 新增巡查任务
+                </button>
+            </div>
+        </div>
+    </div>
+        <div class="card-body">
+              <div class="row">
     {% for taskinfo in taskinfos %}
         <div class="col-xl-4 col-md-6 mb-4">
             <div class="card  shadow h-100 py-2 "
@@ -121,10 +134,6 @@
 
     {% endfor %}
 
-        <div class="col-xl-4 col-md-6 mb-4 flex-column text-center align-self-center">
-            <a class="btn" id="createTask">
-                <i class="fa fa-plus-square-o fa-5x"></i></a>
-        </div>
 
         <div class="modal fade " id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true">
@@ -189,6 +198,9 @@
             </div>
         </div>
     </div>
+        </div>
+    </div>
+
 
     <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
          aria-hidden="true">
@@ -307,7 +319,8 @@
                             $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>任务保存成功，请到任务列表页查看");
                             $('#createTaskModal').modal('hide');
                             $('#taskModal').modal('show');
-                            setTimeout("$('#taskModal').modal('hide')", 3000)
+                            setTimeout("$('#taskModal').modal('hide')", 3000);
+                            window.location.reload()
                         } else if (resp.returncode === 201) {
                             $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>任务保存失败" + resp.message);
                             $('#taskModal').modal('show');
