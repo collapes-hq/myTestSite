@@ -1,13 +1,14 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-from apitest.models import apiInfo, apiCase, monitorTask as monitorTaskInfo
+from apitest.models import apiInfo, apiCase, monitorTask as monitorTaskInfo, taskResultDetail
 from performanceTest.models import BusiLine
 from django.views.decorators.csrf import csrf_exempt
 import json
+import time
 import requests
+
 import jsonpath
 from django.core import serializers
-import grequests
 
 
 # Create your views here.
@@ -156,7 +157,6 @@ def singlerequest(request):
                 params_dict[k] = v
         print(params_dict)
         # 根据method的不同拼凑请求方式
-
         # 获取请求的header
         print(apicasename)
         try:
@@ -201,8 +201,9 @@ def timingTask(request):
 
 
 def singleTaskDetail(request, task_id=0):
-    # taskinfos = monitorTaskInfo.objects.all()
     task_id = task_id
+    # taskinfos = monitorTaskInfo.objects.all()
+    result_list = taskResultDetail.objects.filter(task_id=task_id)
     return render(request, 'singleTaskInfo.html', locals())
 
 
@@ -304,36 +305,114 @@ def addMonitorCase(request):
         return JsonResponse({'returncode': 202, 'message': '任务已存在，请修改后提交'})
 
 
+from threading import Thread
+
+
+def async_task(f):
+    def wrapper(*args, **kwargs):
+        thr = Thread(target=f, args=args, kwargs=kwargs)
+        thr.start()
+
+    return wrapper
+
+
 def manualExecTask(request):
     if request.method == 'GET':
         task_name = request.GET.get('task_name')
         print(task_name)
+        taskexec_id = monitorTaskInfo.objects.get(monitorTask_name=task_name).monitorTask_id
         # 根据task_name获取task下的case_list
         case_list = eval(monitorTaskInfo.objects.get(monitorTask_name=task_name).monitorTask_caseList.replace("true",
                                                                                                               "\'true\'").replace(
             "false", "\'false\'"))
-        print(case_list)
+        print(case_list, taskexec_id)
         # 这些拼装数据的操作都需要后期 缓存到redis或者使用kafka
-        cases_id = []
-        req_list = []
-        for case in case_list:
-            case_id = int(case["importUnitId"])
-            # 根据case_id_list拼装request_list 要遍历case_id_list然后拼装
-            api_case = apiCase.objects.get(apicase_id=case_id)
-            api_id = api_case.case_api_id
-            api_info = apiInfo.objects.get(api_id=api_id)
-            api_type = api_info.api_type  # 获取此case是get还是post
-            api_url = api_info.api_url  # 获取此case的请求url
-            headers = eval(api_info.api_headers)  # 获取请求头
-            data = eval(api_case.apicase_params)
-            print(case_id, api_id, api_type, api_url, type(headers), type(data))
-            if api_type == 0:
-                req_list.append(grequests.get(api_url, headers=headers, params=data))
-            else:
-                req_list.append(grequests.post(api_url, headers=headers, data=data))
-            print(req_list)
-        resq =  grequests.map(req_list)
-        print(resq)
-        for item in resq:
-            print(item.status_code,item.request.headers,item.text)
+        sendRequestAsync(case_list, taskexec_id)
+
         return JsonResponse({'returncode': 200})
+
+
+@async_task
+def sendRequestAsync(case_list, taskexec_id):
+    startTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+    resp_success_list = []
+    resp_failure_list = []
+    for case in case_list:
+        case_id = int(case["importUnitId"])
+        print(case_id)
+        # 根据case_id_list拼装request_list 要遍历case_id_list然后拼装
+        api_case = apiCase.objects.get(apicase_id=case_id)
+        api_id = api_case.case_api_id
+        api_info = apiInfo.objects.get(api_id=api_id)
+        api_type = api_info.api_type  # 获取此case是get还是post
+        api_url = api_info.api_url  # 获取此case的请求url
+        headers = eval(api_info.api_headers)  # 获取请求头
+        data = eval(api_case.apicase_params)
+        # print(case_id, api_id, api_type, api_url, type(headers), type(data))
+        # 下面是grequests的处理代码
+        #     if api_type == 0:
+        #         req_list.append(grequests.get(api_url, headers=headers, params=data))
+        #     else:
+        #         req_list.append(grequests.post(api_url, headers=headers, data=data))
+        #     print(req_list)
+        # resq =  grequests.map(req_list)
+        # print(resq)
+        # for item in resq:
+        #     print(item.status_code,item.request.headers,item.text)
+        if api_type == 0:
+            try:
+                resp = requests.get(url=api_url, headers=headers, params=data)
+                # 先判断返回码是否符合
+                if int(resp.status_code) == int(api_case.apicase_returncode):
+                    try:
+                        result_json = json.loads(resp.text)
+                        express_result = jsonpath.jsonpath(result_json, api_case.apicase_express)[0]
+                        if str(express_result) == str(api_case.apicase_except):
+                            resp_success_list.append(
+                                {'case_id': case_id, 'status_code': resp.status_code, 'resp_content': resp.text,
+                                 'header': resp.request.headers})
+                        else:
+                            resp_failure_list.append(
+                                {'case_id': case_id, 'status_code': resp.status_code, 'resp_content': resp.text,
+                                 'header': resp.request.headers, 'failue': 'expectResultFalse'})
+                    except Exception as e:
+                        resp_failure_list.append(
+                            {'case_id': case_id, 'status_code': '', 'resp_content': '',
+                             'header': '', 'error': e})
+                else:
+                    resp_failure_list.append({'case_id': case_id, 'status_code': '', 'resp_content': '',
+                                              'header': '', 'failue': 'returncode'})
+            except Exception as e:
+                resp_failure_list.append({'case_id': case_id, 'status_code': '', 'resp_content': '',
+                                          'header': '', 'error': e})
+        else:
+            try:
+                resp = requests.post(url=api_url, headers=headers, data=data, verify=False)
+                # 先判断返回码是否符合
+                if int(resp.status_code) == int(api_case.apicase_returncode):
+                    try:
+                        result_json = json.loads(resp.text)
+                        express_result = jsonpath.jsonpath(result_json, api_case.apicase_express)[0]
+                        if str(express_result) == str(api_case.apicase_except):
+                            resp_success_list.append(
+                                {'case_id': case_id, 'status_code': resp.status_code, 'resp_content': resp.text,
+                                 'header': resp.request.headers})
+                    except Exception as e:
+                        resp_failure_list.append(
+                            {'case_id': case_id, 'status_code': '', 'resp_content': '',
+                             'header': '', 'error': e})
+                else:
+                    resp_failure_list.append({'case_id': case_id, 'status_code': '', 'resp_content': '',
+                                              'header': '', 'failue': 'returncode'})
+            except Exception as e:
+                resp_failure_list.append({'case_id': case_id, 'status_code': '', 'resp_content': '',
+                                          'header': '', 'error': e})
+
+    endTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+    try:
+        init = taskResultDetail.objects.create(task_id=taskexec_id, taskResult_success=resp_success_list,
+                                               taskResult_failure=resp_failure_list, taskexec_startTime=startTime,
+                                               taskexec_endTime=endTime)
+        init.save()
+    except Exception as e:
+        print(e)

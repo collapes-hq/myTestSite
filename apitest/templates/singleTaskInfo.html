@@ -2,6 +2,7 @@
 {% block title %}
     任务执行详情
 {% endblock %}
+{% load extra_tags %}
 {% block css %}
     <style type="text/css">
         .table td, .table th {
@@ -70,18 +71,20 @@
                             </tr>
                             </thead>
                             <tbody>
+                            {% for taskresult in result_list %}
                             <tr>
-                                <td>9873517</td>
-                                <td>a</td>
-                                <td>a</td>
+                                <td>{{ taskresult.taskexec_id }}</td>
+                                <td>{{ taskresult.taskexec_startTime|date:"Y/m/d H:m:s"}}</td>
+                                <td>{{ taskresult.taskexec_endTime|date:"Y/m/d H:m:s"}}</td>
                                 <td>已执行</td>
                                 <td>
                                     <div class="btn-group ">
-                                        <button class="btn btn-primary mt-0 mb-0">9</button>
-                                        <button class="btn btn-danger mt-0 mb-0">1</button>
+                                        <button class="btn btn-primary mt-0 mb-0">{{ taskresult.taskResult_success|strToList|length }}</button>
+                                        <button class="btn btn-danger mt-0 mb-0">{{ taskresult.taskResult_failure|strToList|length }}</button>
                                     </div>
                                 </td>
                             </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

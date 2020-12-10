@@ -108,21 +108,36 @@ import json
 # n=a.split(',')
 # print(n)
 # print(list(n)[3])
-import grequests
+# import grequests
+#
+# a = 'http://httpbin.org/get?a=1&b=2'
+#
+#
+# def print_url(r, *args, **kwargs):
+#     print(1111)
+#     print(r.url)
 
-a = 'http://httpbin.org/get?a=1&b=2'
 
-
-def print_url(r, *args, **kwargs):
-    print(1111)
-    print(r.url)
-
-
-url = "http://www.baidu.com"
-req_list = []
-req_list.append(grequests.get('http://121.36.69.137/getmockjson', headers={"a": "b"}))
-# response = grequests.get('http://121.36.69.137/getmockjson')
-
-resp = grequests.map(req_list)
-print(resp[0].request.headers)
-print(resp[0].text)
+# url = "http://www.baidu.com"
+# req_list = []
+# req_list.append(grequests.get('http://121.36.69.137/getmockjson', headers={"a": "b"}))
+# # response = grequests.get('http://121.36.69.137/getmockjson')
+#
+# resp = grequests.map(req_list)
+# print(resp[0].request.headers)
+# print(resp[0].text)
+# import requests
+# try:
+#     resp = requests.get('http://121.36.69.137/getmockjson', headers={"a": "b"})
+#     print(resp.status_code, resp.request.headers)
+# except Exception as e:
+#     print(e)
+#
+#
+# print(resp.text)
+# print(type(resp.text))
+import time
+print(time.localtime())
+print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime()))
+time.sleep(10)
+print(time.localtime())
