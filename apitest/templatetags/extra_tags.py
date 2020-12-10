@@ -34,3 +34,21 @@ def strToDict(value):
 def getCaseCount(value):
     count = len(models.apiCase.objects.filter(case_api_id=value))
     return count
+
+
+@register.filter()
+def getSuccessSum(value):
+    data = models.taskResultDetail.objects.filter(task_id=value)
+    count = 0
+    for item in data:
+        count += len(eval(item.taskResult_success))
+    return count
+
+
+@register.filter()
+def getFailureSum(value):
+    data = models.taskResultDetail.objects.filter(task_id=value)
+    count = 0
+    for item in data:
+        count += len(eval(item.taskResult_failure))
+    return count

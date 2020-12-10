@@ -19,12 +19,12 @@
                 <div class="card">
                     <div class="card-header bg-white">
 
-                        <div class="align-self-center"><span class="font-weight-bold text-dark">巡查任务名称：</span>泰斯特</div>
+                        <div class="align-self-center"><span class="font-weight-bold text-dark">巡查任务名称：</span>{{ taskinfo.monitorTask_name }}</div>
                     </div>
                     <div class="card-body table-hover">
                         <div class="row">
                             <div class="col-4">
-                                <p><span class="text-primary">业务线：</span>大数据部</p>
+                                <p><span class="text-primary">业务线：</span>{{ taskinfo.monitorTask_busi.busi_name }}</p>
                             </div>
                             <div class="col-4">
                                 <p><span class="text-primary">执行类型：</span>自动</p>
@@ -38,10 +38,10 @@
                                 <p><span class="text-primary">创建人：</span>郝强</p>
                             </div>
                             <div class="col-4">
-                                <p><span class="text-primary">用例个数：</span>6</p>
+                                <p><span class="text-primary">用例个数：</span>{{ taskinfo.monitorTask_caseList|strToList|length }}</p>
                             </div>
                             <div class="col-4">
-                                <p><span class="text-primary">定时执行：</span>* * * * *</p>
+                                <p><span class="text-primary">定时执行：</span>{{ taskinfo.monitorTask_cron }}</p>
                             </div>
                         </div>
                     </div>

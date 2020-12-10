@@ -70,7 +70,7 @@
                                 <th>{{ task.monitorTask_caseList|strToList|length }}</th>
                                 <th>{{ task.get_monitorTask_type_display }}</th>
                                 <th>{{ task.monitorTask_c_time|date:"Y/m/d H:m:s" }}</th>
-                                <th>9 | 1</th>
+                                <th><span class="text-success">{{ task.monitorTask_id|getSuccessSum }}</span> | <span class="text-danger">{{ task.monitorTask_id|getFailureSum }}</span></th>
                                 <th>
                                     <div class="btn-group btn-group-justified " role="group" aria-label="...">
                                         <div class="btn-group mr-1" role="group">

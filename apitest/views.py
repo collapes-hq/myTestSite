@@ -204,6 +204,7 @@ def singleTaskDetail(request, task_id=0):
     task_id = task_id
     # taskinfos = monitorTaskInfo.objects.all()
     result_list = taskResultDetail.objects.filter(task_id=task_id)
+    taskinfo = monitorTaskInfo.objects.get(monitorTask_id=task_id)
     return render(request, 'singleTaskInfo.html', locals())
 
 
