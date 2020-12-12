@@ -17,9 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from usermanage import views
 from django.urls import include, path
-
-
-
+from performanceTest import views as first
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url('', include('forfun.urls')),
@@ -32,8 +30,10 @@ urlpatterns = [
     url(r'^getCpuLoad/', view=views.getCpuLoad),
     url(r'^scripttest/', view=views.scripttest),
     url(r'^uploadfile/', view=views.saveFile),
+    url(r'^plateDataSumary/', view=views.plateDataSumary),
     # url(r'^captcha', include('captcha.urls')),
     # url(r'^test/', include('performanceTest.urls')),
-    path('', include('performanceTest.urls'))
+    path('', include('performanceTest.urls')),
+    url('^$', view=first.firstpage),
 
 ]
