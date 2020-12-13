@@ -347,7 +347,10 @@ def sendRequestAsync(case_list, taskexec_id):
         api_info = apiInfo.objects.get(api_id=api_id)
         api_type = api_info.api_type  # 获取此case是get还是post
         api_url = api_info.api_url  # 获取此case的请求url
-        headers = eval(api_info.api_headers)  # 获取请求头
+        if not api_info.api_headers:
+            headers = {}
+        else:
+            headers = eval(api_info.api_headers)  # 获取请求头
         data = eval(api_case.apicase_params)
         # print(case_id, api_id, api_type, api_url, type(headers), type(data))
         # 下面是grequests的处理代码

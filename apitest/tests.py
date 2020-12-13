@@ -136,8 +136,8 @@ import json
 #
 # print(resp.text)
 # print(type(resp.text))
-import time
-print(time.localtime())
-print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime()))
-time.sleep(10)
-print(time.localtime())
+# import time
+# print(time.localtime())
+# print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime()))
+# time.sleep(10)
+# print(time.localtime())
