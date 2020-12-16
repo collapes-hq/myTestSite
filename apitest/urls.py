@@ -13,6 +13,7 @@ urlpatterns = [
     url('apicase/', view=views.apicase),
     url('singlerequest/', view=views.singlerequest),
     url(r'caseadd/$', view=views.addapicase),
+    url(r'delcase/$', view=views.delcase),
     url(r'addcase/$', view=views.addcase),
     url(r'timingTask/$', view=views.timingTask),
     url(r'monitorTask/$', view=views.monitorTask),

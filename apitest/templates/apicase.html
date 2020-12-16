@@ -32,7 +32,7 @@
                             <td class="align-middle">{{ apicase.apicase_id }}</td>
                             <td class="align-middle"><a href="">{{ apicase.apicase_name }}</a></td>
                             <td class="align-middle">{{ apicase.case_api.api_busi.busi_name }}</td>
-                            <td class="align-middle">{{ apicase.case_api.get_api_type_display|upper}}</td>
+                            <td class="align-middle">{{ apicase.case_api.get_api_type_display|upper }}</td>
                             <td class="text-truncate align-middle"
                                 style="max-width: 350px;">{{ apicase.case_api.api_url }}</td>
 
@@ -45,12 +45,12 @@
                                            class="btn btn-primary ">单次请求</a>
                                     </div>
                                     <div class="btn-group" role="group">
-                                        <a href="{% url 'apitest:jumpApi' api.api_id %}"
+                                        <a href="{% url 'apitest:singlecase' apicase.case_api_id apicase.apicase_id %}"
                                            class="btn btn-warning">编辑用例</a>
 
                                     </div>
                                     <div class="btn-group" role="group">
-                                        <button class="btn btn-danger " type="button" id="del"> 删除用例</button>
+                                        <button class="btn btn-danger " type="button" id="deltable"> 删除用例</button>
                                     </div>
                                 </div>
                             </td>
@@ -64,6 +64,46 @@
             </div>
         </div>
     </div>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#secondModal">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="secondModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">用例删除相关</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    api测试用例删除后，巡查任务中也会默认删除！
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="del">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="finishModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p class="text-center mb-0" id="info">
+                            <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                                case删除成功
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
 
 {% block script %}
@@ -73,7 +113,7 @@
     <script>
         $(function () {
             $('#tasktable').DataTable({
-                dom:'<"top">rt<"bottom"fp><"clear">',
+                dom: '<"top">rt<"bottom"fp><"clear">',
                 paging: true,       <!-- 允许分页 -->
                 lengthChange: false, <!-- 允许改变每页显示的行数 -->
                 searching: true,    <!-- 允许内容搜索 -->
@@ -97,6 +137,40 @@
                     infoFiltered: "", //筛选之后的左下角筛选提示(另一个是分页信息显示，在上面的info中已经设置，所以可以不显示)，
                     search: "搜索",
                 }
+
+            });
+            let tbody = $('tbody');
+
+            tbody.on('click', '#deltable', function () {
+
+                var form_value = [];
+                $(this).parent().parent().parent().parent().children('td').each(function () {
+                    form_value.push($(this).text());
+                });
+                var apicase_id = form_value[0];
+                $('#secondModal').modal('show');
+                var thistr = $(this); //将此条的对象赋值 才能在ajax中用
+                $('#del').click(function () {
+                    $('#secondModal').modal('hide');
+                    $.ajax({
+                        async: false,
+                        type: 'GET',
+                        url: "/api/delcase/",
+                        data: {'apicase_id': apicase_id},
+                        dataType: "JSON",
+                        success: function (resp) {
+                            if (resp.returncode === 200) {
+                                //console.log(resp.returncode);
+                                thistr.parent().parent().parent().parent().remove();
+                                $('#finishModal').modal('show');
+                                setTimeout("$('#finishModal').modal('hide')", 5000)
+
+                            }
+                        }
+                    });
+
+                })
+
 
             })
         })

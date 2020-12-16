@@ -172,7 +172,8 @@ def singlerequest(request):
         # 校验返回码
         result = ''
         header = ''
-        if response.text in ['', None]:
+        print(response.text)
+        if response.text in ['', None] or response.status_code in [500, 502, 503, 504]:
             result = ''
         else:
             result = json.loads(response.text)  # 响应的内容转换成字典样式
@@ -198,6 +199,20 @@ def singlerequest(request):
 def timingTask(request):
     taskinfos = monitorTaskInfo.objects.all()
     return render(request, 'timingTask.html', locals())
+
+
+def delcase(request):
+    if request.method == 'GET':
+        # print(request.GET.get("task_id"))
+        try:
+            apiCase.objects.get(apicase_id=request.GET.get("apicase_id")).delete()
+        except Exception as e:
+
+            return JsonResponse({'returncode': 500, 'errorMessage': e})
+        data = {
+            'returncode': 200, 'message': '删除成功'
+        }
+        return HttpResponse(json.dumps(data))
 
 
 def singleTaskDetail(request, task_id=0):
@@ -366,6 +381,7 @@ def sendRequestAsync(case_list, taskexec_id):
         if api_type == 0:
             try:
                 resp = requests.get(url=api_url, headers=headers, params=data)
+                print(resp.request)
                 # 先判断返回码是否符合
                 if int(resp.status_code) == int(api_case.apicase_returncode):
                     try:
@@ -378,17 +394,17 @@ def sendRequestAsync(case_list, taskexec_id):
                         else:
                             resp_failure_list.append(
                                 {'case_id': case_id, 'status_code': resp.status_code, 'resp_content': resp.text,
-                                 'header': resp.request.headers, 'failue': 'expectResultFalse'})
+                                 'header': resp.request.headers, 'failuer': 'expectResultFalse'})
                     except Exception as e:
                         resp_failure_list.append(
                             {'case_id': case_id, 'status_code': '', 'resp_content': '',
                              'header': '', 'error': e})
                 else:
                     resp_failure_list.append({'case_id': case_id, 'status_code': '', 'resp_content': '',
-                                              'header': '', 'failue': 'returncode'})
+                                              'header': '', 'failuer': 'returncode'})
             except Exception as e:
                 resp_failure_list.append({'case_id': case_id, 'status_code': '', 'resp_content': '',
-                                          'header': '', 'error': e})
+                                          'header': '', 'error': 'ConnectionError'})
         else:
             try:
                 resp = requests.post(url=api_url, headers=headers, data=data, verify=False)
