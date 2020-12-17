@@ -49,155 +49,160 @@
     {#        </div>#}
     {#    </div>#}
     <div class="card">
-    <div class="card-header bg-white">
-        <div class="row">
-            <div class="col-2 align-self-center">
-                <span class="font-weight-bolder"><i class="fas fa-tasks"></i> 巡查任务卡片池</span>
-            </div>
-            <div class="col-2 offset-8">
-                <button class="btn btn-primary"  id="createTask"><i class="fa fa-plus-square"></i> 新增巡查任务
-                </button>
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-2 align-self-center">
+                    <span class="font-weight-bolder"><i class="fas fa-tasks"></i> 巡查任务卡片池</span>
+                </div>
+                <div class="col-2 offset-8">
+                    <button class="btn btn-primary" id="createTask"><i class="fa fa-plus-square"></i> 新增巡查任务
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
         <div class="card-body">
-              <div class="row">
-    {% for taskinfo in taskinfos %}
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card  shadow h-100 py-2 "
-                 data-servername="aaa">
-                <div class="card-header" id="header">
-                    <div class="row">
-                        <div class="col-9">
-                            <div class="text-md font-weight-bold text-primary text-uppercase mb-1">
-                                巡查任务:{{ taskinfo.monitorTask_name }}
+            <div class="row">
+                {% for taskinfo in taskinfos %}
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card  shadow h-100 py-2 "
+                             data-servername="aaa">
+                            <div class="card-header" id="header">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <div class="text-md font-weight-bold text-primary text-uppercase mb-1">
+                                            巡查任务:{{ taskinfo.monitorTask_name }}
+                                        </div>
+                                    </div>
+                                    <div class="col-1 text-center" id="editTaskinfo">
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16"
+                                             class="bi bi-pencil-square"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="col-2 text-center" id="delserver">
+
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-person-x"
+                                             fill="currentColor"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10zm1.146-7.85a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
+                                        </svg>
+
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-1 text-center" id="editTaskinfo">
-                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil-square"
-                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                <path fill-rule="evenodd"
-                                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                            </svg>
-                        </div>
-                        <div class="col-2 text-center" id="delserver">
+                            <div class="card-body">
+                                <div class="row ml-1 ">
+                                    <a class="text-primary font-weight-bold" data-toggle="collapse"
+                                       data-target="#collapseExample" aria-expanded="false"
+                                       aria-controls="collapseExample">
+                                        巡查任务用例 <span
+                                            class="badge badge-light">{{ taskinfo.monitorTask_caseList|strToDict|length }}</span>
+                                    </a>
+                                </div>
+                                <div class="row mt-2 ml-1">
+                                    <div class="collapse" id="collapseExample">
+                                        <div class="card card-body">
+                                            {% for case in taskinfo.monitorTask_caseList|strToDict %}
+                                                <li><a href="">{{ case }}</a></li>
 
-                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-person-x"
-                                 fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                      d="M8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10zm1.146-7.85a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
-                            </svg>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <form action="">
+                                    <div class="form-group row">
+                                        <label for="crontab" class="col-4 col-form-label">定时运行：</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-inline form-control" id="crontab"
+                                                   value="{{ taskinfo.monitorTask_cron }}"
+                                                   disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <button class="btn btn-danger btn-block">查看执行详情</button>
+                                        </div>
+                                    </div>
+                                </form>
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <div class="row ml-1 ">
-                        <a class="text-primary font-weight-bold" data-toggle="collapse"
-                           data-target="#collapseExample" aria-expanded="false"
-                           aria-controls="collapseExample">
-                            巡查任务用例 <span class="badge badge-light">{{ taskinfo.monitorTask_caseList|strToDict|length }}</span>
-                        </a>
-                    </div>
-                    <div class="row mt-2 ml-1">
-                        <div class="collapse" id="collapseExample">
-                            <div class="card card-body">
-                                {% for case in taskinfo.monitorTask_caseList|strToDict %}
-                                    <li><a href="">{{ case }}</a></li>
 
-                                {% endfor %}
+                {% endfor %}
+
+
+                <div class="modal fade " id="createTaskModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">新建巡查任务</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="task_name" class="col-form-label">任务名称:</label>
+                                        <input type="text" class="form-control" id="task_name" value="">
+                                    </div>
+                                    <div class="form-row" id="typeTask">
+                                        <div class="form-group col-6">
+                                            <label for="busi" class="col-form-label">业务线</label>
+                                            <select class="custom-select" id="busi" name="busi" required>
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value=1>大数据部</option>
+                                                <option value=2>技术中台部</option>
+                                                <option value=3>技术前台部</option>
+                                                <option value=4>人力部</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="typeOfTask" class="col-form-label">执行类型</label>
+                                            <select class="custom-select" id="typeOfTask" name="typeOfTask" required>
+                                                <option selected disabled value="">Choose...</option>
+                                                <option value=1>自动</option>
+                                                <option value=2>手动</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-10 align-self-center">
+                                            <div id='selector'></div>
+                                        </div>
+                                        <div class="form-group col-2">
+                                            <input type="text" id="crontab_value" class="form-control" value=""
+                                                   disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-dark btn-block" disabled>添加巡查用例</button>
+                                    </div>
+                                    <div class="form-row">
+                                        <div id="transferContainer" class="row ml-2" style="width: 750px;"></div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary" id="saveTask">保存</button>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-footer bg-white">
-                    <form action="">
-                        <div class="form-group row">
-                            <label for="crontab" class="col-4 col-form-label">定时运行：</label>
-                            <div class="col-8">
-                                <input type="text" class="form-inline form-control" id="crontab" value="{{ taskinfo.monitorTask_cron}}"
-                                       disabled>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-12">
-                                <button class="btn btn-danger btn-block">查看执行详情</button>
-                            </div>
-                        </div>
-                    </form>
-
                 </div>
             </div>
-        </div>
-
-    {% endfor %}
-
-
-        <div class="modal fade " id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">新建巡查任务</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="task_name" class="col-form-label">任务名称:</label>
-                                <input type="text" class="form-control" id="task_name">
-                            </div>
-                            <div class="form-row" id="typeTask">
-                                <div class="form-group col-6">
-                                    <label for="busi" class="col-form-label">业务线</label>
-                                    <select class="custom-select" id="busi" name="busi" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        <option value="1">大数据部</option>
-                                        <option value="2">技术中台部</option>
-                                        <option value="3">技术前台部</option>
-                                        <option value="4">人力部</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="typeOfTask" class="col-form-label">执行类型</label>
-                                    <select class="custom-select" id="typeOfTask" name="typeOfTask" required>
-                                        <option selected disabled value="">Choose...</option>
-                                        <option value=0>自动</option>
-                                        <option value=1>手动</option>
-
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group col-10 align-self-center">
-                                    <div id='selector'></div>
-                                </div>
-                                <div class="form-group col-2">
-                                    <input type="text" id="crontab_value" class="form-control" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-dark btn-block" disabled>添加巡查用例</button>
-                            </div>
-                            <div class="form-row">
-                                <div id="transferContainer" class="row ml-2" style="width: 750px;"></div>
-                            </div>
-
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary" id="saveTask">保存</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
         </div>
     </div>
 
@@ -223,14 +228,15 @@
     <script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="{% static 'apitest/js/Transfer.js' %}"></script>
     <script>
+        //声明两个全局变量一个是判断编辑和新建，一个是穿梭框初始化的数据
+        let is_edit = 0;
         let data = [];
         $(function () {
-
             // cron插件声明
             //$('#selector').cron();
-
             //新增任务弹出模态框的监控
             $("#createTask").click(function () {
+                is_edit = 0;
                 $("#createTaskModal").modal('show');
                 $('#transferContainer').transfer({
                     titles: ['待选Case', '已选Case'],
@@ -287,27 +293,75 @@
             $('#getdata').click(function () {
                 event.preventDefault();
                 event.stopPropagation();
-                console.log(111111);
                 var getdata = $('#transferContainer').transfer('getData', 'selectData');
-                alert(getdata);
-                console.log(getdata)
             });
+            //编辑事件
+            $('.card').on('click', '#editTaskinfo', function () {
+                let taskName = $(this).prev().text().split(":")[1];
+                is_edit = 1;
+                $.ajax({
+                    async: false,
+                    type: 'GET',
+                    url: '/api/taskedit/',
+                    data: {'task_name': taskName.trim()},
+                    success: function (resp) {
+                        var modalThis = $('#createTaskModal');
+                        modalThis.modal('show');
+                        let data = resp.taskinfo['case_list_all'];
+                        $.each(data, function (i, elment) {
+                            //数据存储的时候true或者false要带引号，返回到前端就要去掉
+                            if (elment.flag === "false") {
+                                elment.flag = false
+                            } else {
+                                elment.flag = true
+                            }
+                        });
+                        //穿梭框如果不注册 会出不来
+                        $('#transferContainer').transfer({
+                            titles: ['待选Case', '已选Case'],
+                            search: true,
+                            uniqueId: "importUnitId", //唯一id
+                            dataSource: data,
+                            maxSelect: 10,
+                            diffKey: 'flag',
+                            unselectColumns: [{
+                                field: 'flag',
+                                checkbox: true
+                            }, {
+                                field: 'importUnitName',
+                                title: '用例列表'
+                            }]
+                        });
+                        $('#task_name').val(resp.taskinfo['task_name']);
+                        $('#crontab_value').val(resp.taskinfo['task_cron']);
+                        //业务线和执行类型 下拉框的默认值设置
+                        select = document.getElementById('busi');
+                        busi_id = resp.taskinfo['busi_id'];
+                        select.options[busi_id].selected = true;
+                        task_type = resp.taskinfo['task_type'];
+                        typeOfTask = document.getElementById('typeOfTask');
+                        typeOfTask.options[task_type].selected = true;
 
-            //保存任务
-            $('#saveTask').click(function () {
+                    }
+
+
+                })
+            });
+            // 编辑任务
+            function editTask(){
                 //获取表单参数
                 let task_name = $('#task_name').val();
                 let busi_id = $("#busi option:selected").val();
                 let typeOfTask = $('#typeOfTask option:selected').val();
                 let cron_time = $('#crontab_value').val();
                 let case_list = JSON.stringify($('#transferContainer').transfer('getData', 'selectData'));
-                console.log(case_list);
                 let data = {
                     'task_name': task_name,
                     'busi_id': busi_id,
                     'typeOfTask': typeOfTask,
                     'cron_time': cron_time,
-                    'case_list': case_list
+                    'case_list': case_list,
+                    'is_edit':is_edit,
                 };
                 $.ajax({
                     async: false,
@@ -321,6 +375,47 @@
                             $('#taskModal').modal('show');
                             setTimeout("$('#taskModal').modal('hide')", 3000);
                             window.location.reload()
+                        } else if (resp.returncode === 201) {
+                            $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>任务保存失败" + resp.message);
+                            $('#taskModal').modal('show');
+                            setTimeout("$('#taskModal').modal('hide')", 5000)
+                        } else if (resp.returncode === 202) {
+                            $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>任务保存失败" + resp.message);
+                            $('#taskModal').modal('show');
+                            setTimeout("$('#taskModal').modal('hide')", 5000)
+                        }
+                    }
+                })
+            }
+
+            //保存任务
+            $('#saveTask').click(function () {
+                //获取表单参数
+                let task_name = $('#task_name').val();
+                let busi_id = $("#busi option:selected").val();
+                let typeOfTask = $('#typeOfTask option:selected').val();
+                let cron_time = $('#crontab_value').val();
+                let case_list = JSON.stringify($('#transferContainer').transfer('getData', 'selectData'));
+                let data = {
+                    'task_name': task_name,
+                    'busi_id': busi_id,
+                    'typeOfTask': typeOfTask,
+                    'cron_time': cron_time,
+                    'case_list': case_list,
+                    'is_edit':is_edit,
+                };
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: '/api/patrolTaskcase/',
+                    data: data,
+                    success: function (resp) {
+                        if (resp.returncode === 200) {
+                            $('#info').html("<i class=\"fa fa-check-circle text-success mr-1\" aria-hidden=\"true\"></i>任务保存成功，请到任务列表页查看");
+                            $('#createTaskModal').modal('hide');
+                            $('#taskModal').modal('show');
+                            setTimeout("$('#taskModal').modal('hide')", 3000);
+                            setTimeout("window.location.reload()",3000);
                         } else if (resp.returncode === 201) {
                             $('#info').html("<i class=\"fa fa-times text-danger mr-1\" aria-hidden=\"true\"></i>任务保存失败" + resp.message);
                             $('#taskModal').modal('show');

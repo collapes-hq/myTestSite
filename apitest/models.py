@@ -34,7 +34,7 @@ class apiCase(models.Model):
     apicase_id = models.AutoField(primary_key=True, verbose_name='case编号')
     apicase_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='用例名称')
     apicase_desc = models.CharField(max_length=256, null=True, blank=True, verbose_name='用例描述')
-    case_api = models.ForeignKey('apiInfo', null=True, blank=True, on_delete=models.SET_NULL)
+    case_api = models.ForeignKey('apiInfo', null=True, blank=True,default=0,on_delete= models.SET_NULL)
     case_busi = models.ForeignKey('performanceTest.BusiLine', null=True, blank=True, on_delete=models.SET_NULL)
     apicase_params = models.CharField(max_length=256, null=True, blank=True, verbose_name='请求参数')
     apicase_returncode = models.IntegerField(null=True, blank=True, verbose_name='期望returncode')

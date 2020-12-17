@@ -4,76 +4,143 @@
 {% block title %}接口管理{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+    <style type="text/css">
+
+
+        #add, #swaggerimport, #excelimport, #searchbtn {
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+    </style>
 {% endblock %}
 {% block content %}
-    <div class="card card-body">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <select name="" id="" class="form-control">
+                            <option value="0" selected>全部业务线</option>
+                            <option value="1">大数据部</option>
+                            <option value="3">技术中台部</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="inputkey" placeholder="请输入要查询的任务名">
+                    </div>
+                    <div class="col-2 ">
+                        <button class="btn btn-primary mr-1" id="searchbtn"><i class="fa fa-search"
+                                                                               aria-hidden="true"></i> 搜索
+                        </button>
 
-        <div class="row text-left">
-            <div class="col-md-12">
-                <div class="btn btn-group ">
-                    <a type="button" class="btn btn-primary mr-1" href="/api/editapi/"><i class="fas fa-plus"></i> 手动新增</a>
-                    <button class="btn btn-warning mr-1"><i class="fas fa-file-csv"></i> Excel导入</button>
-                    <button class="btn btn-info" data-toggle="tooltip" data-placement="top" data-html="true"
-                            title="例如$.result.list[0].data.title"><i class="fas fa-code"></i> Swagger导入
-                    </button>
+                    </div>
+                    <div class="col-5 text-right">
+
+                        <a type="button" class="btn btn-primary mr-1" href="/api/editapi/" id="add"><i
+                                class="fas fa-plus"></i>
+                            手动新增
+                        </a>
+                        <button class="btn btn-warning mr-1" id="excelimport"><i class="fas fa-file-csv"></i> Excel导入
+                        </button>
+                        <button class="btn btn-info" id="swaggerimport"><i class="fas fa-code"></i> Swagger导入
+                        </button>
+
+
+                    </div>
+                </div>
+
+                <div class="mt-3 row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered" id="tasktable">
+                            <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>接口名称</th>
+                                <th>业务线</th>
+                                <th>方法类型</th>
+                                <th>请求地址</th>
+                                <th>用例数</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for api in apilist %}
+                                <tr>
+
+                                    <td class="align-middle">{{ api.api_id }}</td>
+                                    <td class="text-truncate align-middle"
+                                        style="max-width: 100px;">{{ api.api_name }}</td>
+                                    <td class="align-middle">{{ api.api_busi.busi_name }}</td>
+                                    <td class="align-middle">{{ api.get_api_type_display }}</td>
+                                    <td class="text-truncate align-middle"
+                                        style="max-width: 250px;">{{ api.api_url }}</td>
+                                    <td class="align-middle">{{ api.api_id|getCaseCount }}</td>
+                                    <td class="align-middle">{{ api.api_c_time|date:"Y/m/d H:m:s" }}</td>
+
+                                    <td>
+                                        <div class="btn-group btn-group-justified " role="group" aria-label="...">
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'apitest:addcase' api.api_id %}"
+                                                   class="btn btn-primary">创建用例</a>
+                                            </div>
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'apitest:jumpApi' api.api_id %}"
+                                                   class="btn btn-warning">编辑接口</a>
+
+                                            </div>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-danger " type="button" id="deltable"> 删除接口</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title" id="exampleModalLabel"><span>接口删除提示 <i
+                                class="fa fa-exclamation-circle"></i></span>
+                        </h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body " style="font-size: 16px">
+                        删除接口会清空该接口下所有测试用例！
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-danger" id="del">确认删除</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-
-        <div class="row">
-            <div class="col-md-12">
-
-
-                <table class="table table-bordered" id="tasktable">
-                    <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>接口名称</th>
-                        <th>业务线</th>
-                        <th>方法类型</th>
-                        <th>请求地址</th>
-                        <th>用例数</th>
-                        <th>更新时间</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for api in apilist %}
-                        <tr>
-
-                            <td class="align-middle">{{ api.api_id }}</td>
-                            <td class="text-truncate align-middle" style="max-width: 100px;">{{ api.api_name }}</td>
-                            <td class="align-middle">{{ api.api_busi.busi_name }}</td>
-                            <td class="align-middle">{{ api.get_api_type_display }}</td>
-                            <td class="text-truncate align-middle"
-                                style="max-width: 250px;">{{ api.api_url }}</td>
-                            <td class="align-middle">{{ api.api_id|getCaseCount }}</td>
-                            <td class="align-middle">{{ api.api_c_time|date:"Y/m/d H:m:s" }}</td>
-
-                            <td>
-                                <div class="btn-group btn-group-justified " role="group" aria-label="...">
-                                    <div class="btn-group" role="group">
-                                        <a href="{% url 'apitest:addcase' api.api_id %}"
-                                           class="btn btn-primary">创建用例</a>
-                                    </div>
-                                    <div class="btn-group" role="group">
-                                        <a href="{% url 'apitest:jumpApi' api.api_id %}"
-                                           class="btn btn-warning">编辑接口</a>
-
-                                    </div>
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-danger " type="button" id="del"> 删除接口</button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
-                    {% endfor %}
-                    </tbody>
-
-                </table>
-
+        <div class="modal fade" id="finishModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p class="text-center mb-0" id="info">
+                            <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                            case删除成功
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -85,7 +152,7 @@
 
     <script>
         $(function () {
-            $('#tasktable').DataTable({
+            table = $('#tasktable').DataTable({
                 dom: '<"top">rt<"bottom"fp><"clear">',
 
                 paging: true,       <!-- 允许分页 -->
@@ -113,6 +180,45 @@
                 }
 
             });
+
+            $('#searchbtn').click(function () {
+                let value = $('#inputkey').val();
+                table.search(value).draw();
+            });
+
+            //实现删除功能
+            let tbody = $('tbody');
+            tbody.on('click', '#deltable', function () {
+
+                var form_value = [];
+                $(this).parent().parent().parent().parent().children('td').each(function () {
+                    form_value.push($(this).text());
+                });
+                var api_id = form_value[0];
+                $('#delModal').modal('show');
+                var thistr = $(this); //将此条的对象赋值 才能在ajax中用
+                $('#del').click(function () {
+                    $('#delModal').modal('hide');
+                    $.ajax({
+                        async: false,
+                        type: 'GET',
+                        url: "/api/delapi/",
+                        data: {'api_id': api_id},
+                        success: function (resp) {
+                            if (resp.returncode === 200) {
+                                //console.log(resp.returncode);
+                                thistr.parent().parent().parent().parent().remove();
+                                $('#finishModal').modal('show');
+                                setTimeout("$('#finishModal').modal('hide')", 2000)
+
+                            }
+                        }
+                    });
+
+                })
+
+
+            })
 
         })
 

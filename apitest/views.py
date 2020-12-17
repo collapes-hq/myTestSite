@@ -6,9 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import time
 import requests
-
 import jsonpath
 from django.core import serializers
+from threading import Thread
 
 
 # Create your views here.
@@ -20,8 +20,51 @@ def apimanage(request):
     return render(request, 'apimanage.html', locals())
 
 
+@csrf_exempt
+def task_name_get_taskinfo(request):
+    if request.method == 'GET':
+        task_info = {}
+        task_name = (request.GET.get('task_name')).strip()
+
+        if len(monitorTaskInfo.objects.filter(monitorTask_name=task_name)) > 0:
+            queryset1 = monitorTaskInfo.objects.filter(monitorTask_name=task_name)
+            queryset = json.loads(serializers.serialize('json', queryset1))[0]
+            task_info['busi_id'] = queryset['fields']['monitorTask_busi']
+            task_info['case_list_all'] = get_case_list(task_info['busi_id'])
+            task_info['task_name'] = queryset['fields']['monitorTask_name']
+            task_info['task_type'] = queryset['fields']['monitorTask_type']
+            task_info['task_cron'] = queryset['fields']['monitorTask_cron']
+            case_chose = eval(
+                queryset['fields']['monitorTask_caseList'].replace(
+                    ",\"flags\":false", '').replace("true", "\'true\'").replace("false",
+                                                                                "\'false\'"))
+            # 已选和全部做合并，合并成完整的数据返回给前端
+            for item in case_chose:
+                item['flag'] = 'false'
+
+            for item in task_info['case_list_all']:
+                if item in case_chose:
+                    item['flag'] = 'true'
+            return JsonResponse({'taskinfo': task_info})
+
+
 def test(request):
     # return HttpResponse(request,)
+    return JsonResponse({'returncode': 200})
+
+
+def delapi(request):
+    # 删除
+    if request.method == 'GET':
+        api_id = request.GET.get('api_id')
+        # 删除对应的case,删之前要获取到case_id
+        case_list = [item.pk for item in apiCase.objects.filter(case_api_id=api_id)]
+        print(case_list)
+        # 删除api
+        apiInfo.objects.filter(api_id=api_id).delete()
+        # 删除case
+        for case_id in case_list:
+            apiCase.objects.filter(apicase_id=case_id).delete()
     return JsonResponse({'returncode': 200})
 
 
@@ -232,22 +275,29 @@ def getcaselist(request):
     # 根据业务线查询case
     if request.method == 'GET':
         busi_id = request.GET.get('busi_id')
-        print(busi_id)
-        case_list_queryset = apiCase.objects.filter(case_busi_id=busi_id)
-        if len(case_list_queryset) > 0:
-            caseList = []
-            case_format = {}
-            case_list = json.loads(serializers.serialize("json", case_list_queryset))
-            print(case_list)
-            for case in case_list:
-                caseList.append({
-                    "importUnitId": str(case['pk']),
-                    "importUnitName": case['fields']['apicase_name'],
-                    "flag": 'false',
-                })
-            return JsonResponse({'caseList': caseList})
-        else:
-            return JsonResponse({'caseList': []})
+        caseList = get_case_list(busi_id)
+        return JsonResponse({'caseList': caseList})
+    else:
+        return JsonResponse({'caseList': []})
+
+
+def get_case_list(busi_id):
+    busi_id = busi_id
+    print(busi_id)
+    case_list_queryset = apiCase.objects.filter(case_busi_id=busi_id)
+    if len(case_list_queryset) > 0:
+        caseList = []
+        case_list = json.loads(serializers.serialize("json", case_list_queryset))
+        print(case_list)
+        for case in case_list:
+            caseList.append({
+                "importUnitId": str(case['pk']),
+                "importUnitName": case['fields']['apicase_name'],
+                "flag": 'false',
+            })
+        return caseList
+    else:
+        return []
 
 
 def getdata(request):
@@ -287,7 +337,8 @@ def getdata(request):
             tasks_list.append({
                 "busi": busi_actual[task['fields']['monitorTask_busi']],
                 "name": task['fields']['monitorTask_name'],
-                "casecount": len(task['fields']['monitorTask_caseList']),
+                "casecount": len(eval(
+                    task['fields']['monitorTask_caseList'].replace("true", "\'true\'").replace("false", "\'false\'"))),
                 "type": task_type[task['fields']['monitorTask_type']],
                 "savetime": task['fields']['monitorTask_c_time'],
 
@@ -297,31 +348,40 @@ def getdata(request):
 
     print(type(data2))
     # return JsonResponse(data2)
-    return HttpResponse(json.dumps(data2))
+    return HttpResponse(json.dumps(tasks_list))
 
 
 @csrf_exempt
 def addMonitorCase(request):
     if request.method == 'POST':
+        is_edit = int(request.POST.get('is_edit'))
         task_name = request.POST.get('task_name')
         busi_id = request.POST.get('busi_id')
         type_task = request.POST.get('typeOfTask')
         cron_time = request.POST.get('cron_time')
         case_list = request.POST.get('case_list')
-        if not monitorTaskInfo.objects.filter(monitorTask_name=task_name):
+        if is_edit == 0:  # 执行保存的逻辑
+            if not monitorTaskInfo.objects.filter(monitorTask_name=task_name):
+                try:
+                    init = monitorTaskInfo.objects.create(monitorTask_name=task_name, monitorTask_busi_id=busi_id,
+                                                          monitorTask_type=type_task, monitorTask_caseList=case_list,
+                                                          monitorTask_cron=cron_time)
+                    init.save()
+                    return JsonResponse({'returncode': 200, 'message': '保存成功'})
+                except Exception as e:
+                    return JsonResponse({'returncode': 201, 'message': '保存失败,{0}'.format(e)})
+            return JsonResponse({'returncode': 202, 'message': '任务已存在，请修改后提交'})
+        else:  # 执行更新的逻辑
+            taskQuerySet = monitorTaskInfo.objects.get(monitorTask_name=task_name)
+            taskQuerySet.monitorTask_busi_id = busi_id
+            taskQuerySet.monitorTask_cron = cron_time
+            taskQuerySet.monitorTask_caseList = case_list
+            taskQuerySet.monitorTask_type = type_task
             try:
-                init = monitorTaskInfo.objects.create(monitorTask_name=task_name, monitorTask_busi_id=busi_id,
-                                                      monitorTask_type=type_task, monitorTask_caseList=case_list,
-                                                      monitorTask_cron=cron_time)
-                init.save()
-                return JsonResponse({'returncode': 200, 'message': '保存成功'})
+                taskQuerySet.save()
+                return JsonResponse({'returncode': 200, 'message': '修改成功'})
             except Exception as e:
-                print(e)
                 return JsonResponse({'returncode': 201, 'message': '保存失败,{0}'.format(e)})
-        return JsonResponse({'returncode': 202, 'message': '任务已存在，请修改后提交'})
-
-
-from threading import Thread
 
 
 def async_task(f):

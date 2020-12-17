@@ -18,8 +18,8 @@
                         <th>ID</th>
                         <th>用例名称</th>
                         <th>业务线</th>
-                        <th>接口地址</th>
                         <th>请求类型</th>
+                        <th>接口地址</th>
 
                         <th>更新时间</th>
                         <th>操作</th>
@@ -30,11 +30,13 @@
                         <tr>
 
                             <td class="align-middle">{{ apicase.apicase_id }}</td>
-                            <td class="align-middle"><a href="">{{ apicase.apicase_name }}</a></td>
+                            <td class="align-middle"><a
+                                    href="{% url 'apitest:singlecase' apicase.case_api_id apicase.apicase_id %}">{{ apicase.apicase_name }}</a>
+                            </td>
                             <td class="align-middle">{{ apicase.case_api.api_busi.busi_name }}</td>
                             <td class="align-middle">{{ apicase.case_api.get_api_type_display|upper }}</td>
                             <td class="text-truncate align-middle"
-                                style="max-width: 350px;">{{ apicase.case_api.api_url }}</td>
+                                style="max-width: 280px;">{{ apicase.case_api.api_url }}</td>
 
                             <td class="align-middle">{{ apicase.apicase_c_time|date:"Y/m/d H:m:s" }}</td>
 
@@ -65,26 +67,23 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#secondModal">
-        Launch demo modal
-    </button>
-
     <!-- Modal -->
     <div class="modal fade" id="secondModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">用例删除相关</h5>
+                    <h6 class="modal-title" id="exampleModalLabel"><span>用例删除提示 <i class="fa fa-exclamation-circle"></i></span>
+                    </h6>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    api测试用例删除后，巡查任务中也会默认删除！
+                <div class="modal-body font-weight-bold">
+                    api测试用例删除后，<span class=" font-weight-bold">巡查任务中也会默认删除！</span>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-danger" id="del">确认删除</button>
                 </div>
             </div>
@@ -92,18 +91,18 @@
     </div>
 
     <div class="modal fade" id="finishModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <p class="text-center mb-0" id="info">
-                            <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
-                                case删除成功
-                        </p>
-                    </div>
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-center mb-0" id="info">
+                        <i class="fa fa-check-circle text-success mr-1" aria-hidden="true"></i>
+                        case删除成功
+                    </p>
                 </div>
             </div>
         </div>
+    </div>
 {% endblock %}
 
 {% block script %}
