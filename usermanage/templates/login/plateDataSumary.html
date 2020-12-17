@@ -38,25 +38,26 @@
         var myChart = echarts.init(document.getElementById('myChart'));
 
         function randomData() {
-            now = new Date(+now + oneDay);
-            value = Math.random()*10+10 ;
+            now = new Date(+now + oneMin);
+            console.log(now);
+            value = Math.random() * 10;
             return {
                 name: now.toString(),
                 value: [
-                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+                    [now.getFullYear(), now.getMonth()+1, now.getDate(),].join('/') + " " + [now.getHours(), now.getMinutes()].join(':'),
                     Math.round(value)
                 ]
             };
         }
 
         var data = [];
-        var now = +new Date(2020, 12, 12);
-        var oneDay = 3600  * 1000;
-        var value = Math.random() *100;
+        var now = +new Date(2020, 12, 17,12,0,0);
+        console.log(now);
+        var oneMin = 60 * 1000;
+        var value = Math.random() * 100;
         for (var i = 0; i < 100; i++) {
             data.push(randomData());
         }
-        console.log(data);
         option = {
 
             tooltip: {
@@ -64,7 +65,7 @@
                 formatter: function (params) {
                     params = params[0];
                     var date = new Date(params.name);
-                    return date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() + ' : ' + params.value[1];
+                    return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + " " + date.getHours() + ':' + date.getMinutes() + ':00' + ' : ' + params.value[1];
                 },
                 axisPointer: {
                     animation: false
@@ -97,10 +98,11 @@
 
         setInterval(function () {
 
-            for (var i = 0; i < 10; i++) {
-                data.shift();
-                data.push(randomData());
-            }
+
+            data.shift();
+
+            data.push(randomData());
+
 
             myChart.setOption({
                 option,
