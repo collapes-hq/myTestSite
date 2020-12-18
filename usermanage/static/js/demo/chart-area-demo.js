@@ -108,7 +108,7 @@ function setdata(data) {
                     padding: 10,
                     // Include a dollar sign in the ticks
                     callback: function (value, index, values) {
-                        return '$' + number_format(value);
+                        return  number_format(value);
                     }
                 },
                 gridLines: {
@@ -140,7 +140,7 @@ function setdata(data) {
             callbacks: {
                 label: function (tooltipItem, chart) {
                     var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                    return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                    return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
                 }
             }
         }

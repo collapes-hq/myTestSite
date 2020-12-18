@@ -5,11 +5,11 @@
         <div class="row">
 
             <!-- Area Chart -->
-            <div class="col-xl-8 col-lg-7">
+            <div class="col-xl-12 col-lg-12">
                 <div class="card shadow mb-4">
                     <!-- Card Header - Dropdown -->
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">服务器负载</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">接口数据汇总</h6>
                         <div class="dropdown no-arrow">
                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                data-toggle="dropdown"
@@ -20,9 +20,9 @@
                     </div>
                     <!-- Card Body -->
                     <div class="card-body">
-                        <div class="chart-area">
-                            <div id="myChart" style="width: 600px;height:400px;"></div>
-                        </div>
+
+                        <div id="myChart" style="height: 800px"></div>
+
                     </div>
                 </div>
             </div>
@@ -32,86 +32,202 @@
 {% block script %}
     <script src="{% static 'vendor/chart.js/echarts.js' %}"></script>
     <script>
-
+    let apidata = {};
+    let taskdatasumary = {};
+    let alermtasksumary = {};
+    $(function () {
 
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('myChart'));
 
-        function randomData() {
-            now = new Date(+now + oneMin);
-            console.log(now);
-            value = Math.random() * 10;
-            return {
-                name: now.toString(),
-                value: [
-                    [now.getFullYear(), now.getMonth()+1, now.getDate(),].join('/') + " " + [now.getHours(), now.getMinutes()].join(':'),
-                    Math.round(value)
-                ]
-            };
-        }
+        $.ajax({
+            async:false,
+            type:'GET',
+            url:'/datasumary/',
+            success:function (resp) {
+                console.log(typeof(resp));
+                apidata = resp["data"]["apidata"];
+                console.log(typeof(apidata));
+                taskdatasumary =resp["data"]["taskdatasumary"];
+                console.log(taskdatasumary);
+                alermtasksumary =resp["data"]["alermtasksumary"]
+            }
+        });
 
-        var data = [];
-        var now = +new Date(2020, 12, 17,12,0,0);
-        console.log(now);
-        var oneMin = 60 * 1000;
-        var value = Math.random() * 100;
-        for (var i = 0; i < 100; i++) {
-            data.push(randomData());
-        }
+
+        var waterMarkText = '测试数据';
+
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = canvas.height = 100;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.globalAlpha = 0.08;
+        ctx.font = '20px Microsoft Yahei';
+        ctx.translate(50, 50);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillText(waterMarkText, 0, 0);
+
         option = {
-
-            tooltip: {
-                trigger: 'axis',
-                formatter: function (params) {
-                    params = params[0];
-                    var date = new Date(params.name);
-                    return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + " " + date.getHours() + ':' + date.getMinutes() + ':00' + ' : ' + params.value[1];
-                },
-                axisPointer: {
-                    animation: false
-                }
+            backgroundColor: {
+                type: 'pattern',
+                image: canvas,
+                repeat: 'repeat'
             },
-            xAxis: {
-                type: 'time',
-                splitLine: {
-                    show: false
-                }
-            },
-            yAxis: {
+            tooltip: {},
+            title: [{
+                text: '业务线接口&用例数',
+                subtext: '总计 ' + apidata.all,
+                left: '25%',
+                textAlign: 'center'
+            }, {
+                text: '各部门任务数',
+                subtext: '总计 ' + Object.keys(taskdatasumary).reduce(function (all, key) {
+                    return all + taskdatasumary[key];
+                }, 0),
+                left: '75%',
+                textAlign: 'center'
+            }, {
+                text: '任务报警数',
+                subtext: '总计 ' + Object.keys(alermtasksumary).reduce(function (all, key) {
+                    return all + alermtasksumary[key];
+                }, 0),
+                left: '75%',
+                top: '50%',
+                textAlign: 'center'
+            }],
+            grid: [{
+                top: 50,
+                width: '50%',
+                bottom: '45%',
+                left: 10,
+                containLabel: true
+            }, {
+                top: '55%',
+                width: '50%',
+                bottom: 0,
+                left: 10,
+                containLabel: true
+            }],
+            xAxis: [{
                 type: 'value',
-                boundaryGap: [0, 10],
+                max: apidata.all,
                 splitLine: {
                     show: false
                 }
-            },
+            }, {
+                type: 'value',
+                max: apidata.all,
+                gridIndex: 1,
+                splitLine: {
+                    show: false
+                }
+            }],
+            yAxis: [{
+                type: 'category',
+                data: Object.keys(apidata.charts),
+                axisLabel: {
+                    interval: 0,
+                    rotate: 30
+                },
+                splitLine: {
+                    show: false
+                }
+            }, {
+                gridIndex: 1,
+                type: 'category',
+                data: Object.keys(apidata.components),
+                axisLabel: {
+                    interval: 0,
+                    rotate: 30
+                },
+                splitLine: {
+                    show: false
+                }
+            }],
             series: [{
-                name: '模拟数据',
-                type: 'line',
-                showSymbol: false,
-                hoverAnimation: false,
-                data: data
+                type: 'bar',
+                stack: 'chart',
+                z: 3,
+                label: {
+                    normal: {
+                        position: 'right',
+                        show: true
+                    }
+                },
+                data: Object.keys(apidata.charts).map(function (key) {
+                    return apidata.charts[key];
+                })
+            }, {
+                type: 'bar',
+                stack: 'chart',
+                silent: true,
+                itemStyle: {
+                    normal: {
+                        color: '#eee'
+                    }
+                },
+                data: Object.keys(apidata.charts).map(function (key) {
+                    return apidata.all - apidata.charts[key];
+                })
+            }, {
+                type: 'bar',
+                stack: 'component',
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                z: 3,
+                label: {
+                    normal: {
+                        position: 'right',
+                        show: true
+                    }
+                },
+                data: Object.keys(apidata.components).map(function (key) {
+                    return apidata.components[key];
+                })
+            }, {
+                type: 'bar',
+                stack: 'component',
+                silent: true,
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                itemStyle: {
+                    normal: {
+                        color: '#eee'
+                    }
+                },
+                data: Object.keys(apidata.components).map(function (key) {
+                    return apidata.all - apidata.components[key];
+                })
+            }, {
+                type: 'pie',
+                radius: [0, '30%'],
+                center: ['75%', '25%'],
+                data: Object.keys(taskdatasumary).map(function (key) {
+                    return {
+                        name: key,
+                        value: taskdatasumary[key]
+                    }
+                })
+            }, {
+                type: 'pie',
+                radius: [0, '30%'],
+                center: ['75%', '75%'],
+                data: Object.keys(alermtasksumary).map(function (key) {
+                    return {
+                        name: key,
+                        value: alermtasksumary[key]
+                    };
+                })
             }]
         };
         myChart.setOption(
             option
         );
 
-        setInterval(function () {
+    });
 
 
-            data.shift();
-
-            data.push(randomData());
-
-
-            myChart.setOption({
-                option,
-                series: [{
-                    type: 'line',
-                    data: data
-                }]
-            });
-        }, 1000);
 
     </script>
 {% endblock %}

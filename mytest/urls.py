@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^api/', include('apitest.urls')),
     # url(r'^dashboard$', include('performanceTest.urls')),
     url(r'^test/', view=views.test),
+    url(r'^datasumary/', view=views.datasumary),
     url(r'^login/', view=views.login),
     url(r'^register/', view=views.register),
     url(r'^logout/', view=views.logout),
