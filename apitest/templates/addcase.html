@@ -390,13 +390,11 @@
                 var validation = Array.prototype.filter.call(forms, function (form) {
                     form.addEventListener('submit', function (event) {
                         if (form.checkValidity() === false) {
-                            console.log(1);
                             event.preventDefault();
                             event.stopPropagation();
                             form.classList.add('was-validated');
                         } else {
                             event.preventDefault();
-                            console.log(2);
                             submitFormData()
                         }
 
@@ -415,12 +413,12 @@
                 singlerequestParam.push({name: "path", value: url_path});
                 singlerequestParam.push({name: "method", value: method});
                 singlerequestParam.push({name: "apiName", value: apiName});
-                console.log(singlerequestParam);
+                //console.log(singlerequestParam);
                 //循环序列化成数组的表单数据 然后添加到字典formData中
                 $.each(singlerequestParam, function () {
                     formData[this.name] = this.value;
                 });
-                console.log(formData);
+                //console.log(formData);
 
                 //自己写验证规则
                 //let forms = $('.needs-validation');
@@ -429,13 +427,10 @@
                 var validation = Array.prototype.filter.call(forms, function (form) {
 
                     if (form.checkValidity() === false) {
-                        console.log(1);
                         event.preventDefault();
                         event.stopPropagation();
                         form.classList.add('was-validated');
                     } else {
-
-                        console.log(2);
                         // 发送请求
                         $.ajax({
                             async: false,

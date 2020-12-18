@@ -63,7 +63,6 @@
         }).on("fileuploaded", function (e, data) {
 
             var result = data.response["result"];
-            console.log(result);
             if (result === "UPLOAD SUCESS") {
                 $('#myModal').modal('show');
                 setTimeout("$('#myModal').modal('hide')", 1000)

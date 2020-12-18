@@ -174,7 +174,6 @@
                 var server_name = $(this).prev().text().split(":")[1];
                 var server_ip = $(this).parent().parent().next().find("#server_ip").text().split(":")[1];
                 //var server_status = $('#server_status').text();
-                console.log(server_ip);
                 var modalThis = $('#editModal');
                 modalThis.modal('show');
                 modalThis.find('#server-name').val($.trim(server_name));
@@ -240,7 +239,6 @@
 
 
         function addcheck() {
-            console.log(3);
             var addforms = document.getElementsByClassName("addservermodal");
             // Loop over them and prevent submission
             var validations = Array.prototype.filter.call(addforms, function (form) {
@@ -251,7 +249,6 @@
                         form.classList.add('was-validated');
                     } else {
                         event.preventDefault();
-                        console.log(4);
                         submitAddFormData()
                     }
 

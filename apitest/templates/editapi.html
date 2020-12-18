@@ -263,13 +263,11 @@
                 var validation = Array.prototype.filter.call(forms, function (form) {
                     form.addEventListener('submit', function (event) {
                         if (form.checkValidity() === false) {
-                            console.log(1);
                             event.preventDefault();
                             event.stopPropagation();
                             form.classList.add('was-validated');
                         } else {
                             event.preventDefault();
-                            console.log(2);
                             submitFormData()
                         }
 
@@ -278,11 +276,9 @@
             }, false);
 
             function submitFormData() {
-                console.log(999);
                 let apiname = $("#apiname").val();
                 let apiurl = $("#apiurl").val();
                 let t = $("#apiform").serializeArray();
-                console.log(t);
                 let data = {
                     "apiname": apiname,
                     "apiurl": apiurl,

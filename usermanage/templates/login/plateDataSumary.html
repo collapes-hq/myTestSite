@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}
+    平台接口数据
+{% endblock %}
 {% block content %}
     <div class="container-fluid">
         <div class="row">
@@ -45,11 +48,11 @@
             type:'GET',
             url:'/datasumary/',
             success:function (resp) {
-                console.log(typeof(resp));
+                //console.log(typeof(resp));
                 apidata = resp["data"]["apidata"];
-                console.log(typeof(apidata));
+                //console.log(typeof(apidata));
                 taskdatasumary =resp["data"]["taskdatasumary"];
-                console.log(taskdatasumary);
+                //console.log(taskdatasumary);
                 alermtasksumary =resp["data"]["alermtasksumary"]
             }
         });

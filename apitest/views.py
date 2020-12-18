@@ -59,7 +59,6 @@ def delapi(request):
         api_id = request.GET.get('api_id')
         # 删除对应的case,删之前要获取到case_id
         case_list = [item.pk for item in apiCase.objects.filter(case_api_id=api_id)]
-        print(case_list)
         # 删除api
         apiInfo.objects.filter(api_id=api_id).delete()
         # 删除case
@@ -76,15 +75,11 @@ def editapi(request, api_id=0):
         busi_line = BusiLine.objects.all()
         headers = {}
         api_info = apiInfo.objects.get(api_id=api_id)
-        print(api_info)
-
         if api_info.api_headers:
             try:
                 headers = eval(api_info.api_headers)
-                print(type(headers))
             except Exception as e:
-                print(e)
-            return render(request, 'editapi.html',
+                return render(request, 'editapi.html',
                           {"api_info": api_info, "busi_line": busi_line, "headers": headers})
 
         return render(request, 'editapi.html', {"api_info": api_info, "busi_line": busi_line, "headers": headers})
@@ -114,7 +109,6 @@ def saveapi(request):
             for k, v in zip(header_key, header_value):
                 if k not in [None, ""] and v not in [None, ""]:
                     header_dict[k] = v
-            print(header_dict)
             s = apiInfo.objects.create(api_name=apiname, api_url=apiurl, api_busi_id=int(api_busi), api_type=method,
                                        api_contenttype=int(contenttype), api_content=apicontent, api_apidesc=apidesc,
                                        api_headers=header_dict)
@@ -127,7 +121,6 @@ def saveapi(request):
 def addapicase(request):
     if request.method == "POST":
         api_id = int(request.POST.get('path').split('/')[-2])
-        print(api_id)
         busi_id = request.POST.get('busi_id')
         # 还要根据api之前录入的时候选的参数格式拿参数
         apicase_name = request.POST.get('apicasename')
@@ -152,7 +145,6 @@ def addapicase(request):
                                               apicase_params=params_dict, case_api_id=api_id, case_busi_id=busi_id)
                 init.save()
             except Exception as e:
-                print(e)
                 return JsonResponse({'returncode': 201, 'message': '保存失败' + str(e)})
             return JsonResponse({'returncode': 200, 'message': '保存成功'})
         return JsonResponse({'returncode': 202, 'message': '保存失败,用例名称已存在'})
@@ -198,14 +190,11 @@ def singlerequest(request):
         for k, v in zip(params_key, params_value):
             if k not in [None, ""] and v not in [None, ""]:
                 params_dict[k] = v
-        print(params_dict)
         # 根据method的不同拼凑请求方式
         # 获取请求的header
-        print(apicasename)
         try:
             headers = eval(apiInfo.objects.get(api_name=api_name).api_headers)
         except Exception as e:
-            print(e)
             headers = ''
         if int(request_method) == 0:
             response = requests.get(url=url_path, headers=headers, params=params_dict, )
@@ -215,7 +204,6 @@ def singlerequest(request):
         # 校验返回码
         result = ''
         header = ''
-        print(response.text)
         if response.text in ['', None] or response.status_code in [500, 502, 503, 504]:
             result = ''
         else:
@@ -224,7 +212,6 @@ def singlerequest(request):
         if return_code_actual == int(returncode_expect):
             # 因为如果都转换成json格式 再return 前端处理会报错，所以转字典就可以了
             result_json = json.loads(response.text)  # jsonpath处理数据必须是dict格式
-            print(type(result_json))
             try:
                 express_result = jsonpath.jsonpath(result_json, apicase_express)[0]
             except Exception as e:
@@ -283,12 +270,10 @@ def getcaselist(request):
 
 def get_case_list(busi_id):
     busi_id = busi_id
-    print(busi_id)
     case_list_queryset = apiCase.objects.filter(case_busi_id=busi_id)
     if len(case_list_queryset) > 0:
         caseList = []
         case_list = json.loads(serializers.serialize("json", case_list_queryset))
-        print(case_list)
         for case in case_list:
             caseList.append({
                 "importUnitId": str(case['pk']),
@@ -323,8 +308,6 @@ def getdata(request):
     if len(monitorTaskInfo.objects.all()) > 0:
         queryset_tasks = json.loads(serializers.serialize("json", monitorTaskInfo.objects.all()))
         busi_dict = BusiLine.objects.values('busi_id', 'busi_name')
-        print(busi_dict)
-        print(queryset_tasks)
         busi_actual = {}
         task_type = {
             0: "自动",
@@ -332,7 +315,6 @@ def getdata(request):
         }
         for busi in busi_dict:
             busi_actual[busi['busi_id']] = busi['busi_name']
-        print(busi_actual)
         for task in queryset_tasks:
             tasks_list.append({
                 "busi": busi_actual[task['fields']['monitorTask_busi']],
@@ -343,10 +325,6 @@ def getdata(request):
                 "savetime": task['fields']['monitorTask_c_time'],
 
             })
-        print(queryset_tasks)
-        print(tasks_list)
-
-    print(type(data2))
     # return JsonResponse(data2)
     return HttpResponse(json.dumps(tasks_list))
 

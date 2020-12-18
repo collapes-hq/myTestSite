@@ -19,14 +19,13 @@ import subprocess
 def firstpage(request):
     num = len(ServerInfo.objects.all())
 
-    print(request.session.get('is_login'))
+    # print(request.session.get('is_login'))
     unusecount = len(ServerInfo.objects.filter(server_status=0))
     taskcount = len(TaskList.objects.all())
     short = ['我们对待生活的态度，也就是所说的幸运度',
              '时间就是金钱，我的朋友',
              '健康的身体是你做任何事情的本钱'][random.randint(0, 2)]
     data = json.dumps([10000, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 60000])
-    print(data)
     return render(request, 'login/dashboard.html', locals())
 
 
@@ -82,7 +81,6 @@ def indextest(request, task_id=0):
     data = TaskList.objects.get(task_id=task_id)
     taskid = task_id
     busi_line = BusiLine.objects.all()
-    print(data, taskid)
     return render(request, 'performance/index.html', locals())
 
 
@@ -131,15 +129,24 @@ def saveplan(request):
         stepTime = request.POST.get("startTime")
         urlPrama = request.POST.get("urlParam")
         testTime = request.POST.get("testTime")
+        server_name = request.POST.get("state")
         exec_device = ServerInfo.objects.get(server_name=request.POST.get("state"))
         task_name_in = json.loads(
             serializers.serialize("json", TaskList.objects.filter(task_name=task_name), fields=('task_name',)))
-        print(task_name_in)
         if len(task_name_in) != 0:
             # 判断是否已存在
             if task_name == task_name_in[0]['fields']['task_name']:
                 # 判断是否已存在
                 # 如果没有变化提示 return JsonResponse({"returncode": 200, "message": '，案例名称已存在，请勿重复提交'})
+                task = TaskList.objects.get(task_name=task_name)
+                task.busi_line=busi_line
+                task.test_url = test_url
+                task.threadCount = threadCount
+                task.urlPrama = urlPrama
+                task.exec_device = exec_device
+                task.stepTime = stepTime
+                task.testTime = testTime
+                task.save()
 
                 return JsonResponse({"returncode": 20100, "message": '压测任务更新成功'})
 

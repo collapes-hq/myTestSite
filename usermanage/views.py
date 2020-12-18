@@ -101,9 +101,9 @@ def test(request):
 def saveFile(request):
     if request.method == 'POST':
         testFile = request.FILES.get("myfile", None)
-        print(request.session.keys())
-        print(request.session.values())
-        print(request.session.get('user_name'))
+        # print(request.session.keys())
+        # print(request.session.values())
+        # print(request.session.get('user_name'))
         if not testFile:
             return HttpResponse("NO FILE FOR UPLOAD")
         with open(os.path.join(r"D:\files", testFile.name), 'wb+') as f:

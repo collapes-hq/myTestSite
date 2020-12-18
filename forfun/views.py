@@ -82,14 +82,12 @@ def saveServerInfo(request):
         if not servers:
             init = ServerInfo.objects.create(server_name=server_name, server_ip=server_ip, server_cloud=server_cloud,
                                              server_status=server_status)
-            print(1)
             init.save()
         else:
             for server in servers:
                 server.server_ip = server_ip
                 server.server_cloud = server_cloud
                 server.server_status = server_status
-                print(2)
                 server.save()
         # print(server_name, server_ip, server_cloud, server_status)
         return JsonResponse({'returncode': 200, 'message': '保存成功'})
