@@ -11,6 +11,10 @@ def wordCloud(request):
     return render(request, 'wordCloud.html', locals())
 
 
+def citychoice(request):
+    return render(request, 'cityChoice.html', locals())
+
+
 def blogpage(request):
     articles = models.Article.objects.all()
     categories = models.Category.objects.all()
@@ -21,7 +25,7 @@ def blogpage(request):
 def category(request, slug=''):
     slug = slug
     articles = models.Article.objects.filter(category=models.Category.objects.get(slug=slug).id)
-    #articles = models.Category.objects.get(slug=slug).id
+    # articles = models.Category.objects.get(slug=slug).id
     category = models.Category.objects.get(slug=slug)
     categories = models.Category.objects.all()
     tag_list = models.Tag.objects.all()

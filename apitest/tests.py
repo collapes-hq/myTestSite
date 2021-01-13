@@ -141,3 +141,9 @@ import json
 # print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime()))
 # time.sleep(10)
 # print(time.localtime())
+
+# from apitest import tasks
+#
+# res = tasks.addaaa.delay()
+#
+# print(res.get())

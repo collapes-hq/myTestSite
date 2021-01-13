@@ -7,7 +7,8 @@ from django.urls import include, path
 app_name = 'apitest'
 urlpatterns = [
     url('manage/', view=views.apimanage),
-    url('test/', view=views.test),
+    url('celerytest/', view=views.celerytest),
+    # url('celerytestapi/', view=views.celerytestapi),
     url('editapi/$', view=views.editapi),
     url('saveapi/$', view=views.saveapi),
     url('taskedit/$', view=views.task_name_get_taskinfo),

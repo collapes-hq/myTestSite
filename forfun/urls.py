@@ -14,6 +14,7 @@ app_name = 'forfun'
 urlpatterns = [
     url('^forfun/wordCloud/', view=views.wordCloud),
     url('^forfun/blog/', view=views.blogpage),
+    url('^forfun/cityChoice/', view=views.citychoice),
     url('^forfun/servermanage/', view=views.servermanage),
     url('^forfun/delserver/', view=views.delserver),
     url('^forfun/saveServerInfo/', view=views.saveServerInfo),

@@ -47,10 +47,15 @@ def task_name_get_taskinfo(request):
                     item['flag'] = 'true'
             return JsonResponse({'taskinfo': task_info})
 
-
-def test(request):
-    # return HttpResponse(request,)
-    return JsonResponse({'returncode': 200})
+# 测试celery异步任务
+def celerytest(request):
+    from apitest import tasks
+    print(1)
+    res = tasks.addaaa.apply_async((1,2))
+    # res = tasks.addaaa.delay(a=1,b=2)
+    # print(res.get(timeout=1))
+    task_id = res.id
+    return JsonResponse({'returncode': 200, 'task_id': task_id})
 
 
 def delapi(request):
@@ -80,7 +85,7 @@ def editapi(request, api_id=0):
                 headers = eval(api_info.api_headers)
             except Exception as e:
                 return render(request, 'editapi.html',
-                          {"api_info": api_info, "busi_line": busi_line, "headers": headers})
+                              {"api_info": api_info, "busi_line": busi_line, "headers": headers})
 
         return render(request, 'editapi.html', {"api_info": api_info, "busi_line": busi_line, "headers": headers})
 
