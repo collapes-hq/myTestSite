@@ -6,7 +6,7 @@ from django.db import models
 
 class TaskList(models.Model):
     task_id = models.AutoField(primary_key=True, verbose_name='序号')
-    task_name = models.CharField(max_length=256, null=True, blank=True, unique=True, verbose_name='任务名称')
+    task_name = models.CharField(max_length=252, null=True, blank=True, unique=True, verbose_name='任务名称')
     busi_line = models.ForeignKey('BusiLine', null=True, verbose_name='业务线', on_delete=models.SET_NULL)
     exec_device = models.ForeignKey('ServerInfo', null=True, verbose_name='所选压测机', on_delete=models.SET_NULL)
     test_url = models.URLField(max_length=256)

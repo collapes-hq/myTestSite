@@ -12,8 +12,14 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 import time
 
+
 @shared_task
-def addaaa(a,b):
+def addaaa(a, b):
     time.sleep(5)
-    sum = a+b
+    sum = a + b
     return sum
+
+@shared_task
+def add():
+   time.sleep(2)
+   return 6

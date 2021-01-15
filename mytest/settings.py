@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
+# 设置路径
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -40,7 +41,10 @@ INSTALLED_APPS = [
     'captcha',
     'performanceTest',
     'corsheaders',
-    'apitest'
+    'apitest',
+    'djcelery',
+    'django_celery_results',
+    'django_celery_beat',	
 ]
 
 MIDDLEWARE = [
@@ -131,14 +135,7 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sina.com'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = 'haoqiang223@sina.com'
-EMAIL_HOST_PASSWORD = ''
-
-
 # 网站默认设置和上下文信息
-SITE_END_TITLE = '网站的名称，如TendCode'
+SITE_END_TITLE = '网站的名称'
 SITE_DESCRIPTION = '网站描述'
 SITE_KEYWORDS = '网站关键词，多个词用英文逗号隔开'
